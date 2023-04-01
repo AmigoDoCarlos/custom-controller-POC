@@ -18,28 +18,25 @@ export default function MainSection(){
     const { grid, state, floatingButton, setFloatingButton } = useEditContext(); 
     const { language } = useGlobalContext();
     const [buttons, setButtons] = useState<Button[]>([]);
-    const selectedSectorID = useRef(-1);
 
     useEffect(() => {
-        if(floatingButton.state === 'released'){
-            if(!floatingButton.sectorXY){
-                console.log('Nenhum botão selecionado.');
-            } else {
-                const x = floatingButton.sectorXY.x;
-                const y = floatingButton.sectorXY.y;
-                console.log(`[x: ${x}, y: ${y}]`);
-                addNewButton(x, y);
-            }
-            setFloatingButton(previous => ({...previous, state: 'idle'}));
+        if(floatingButton.sector && floatingButton.state === 'released'){
+            const {id, x, y} = floatingButton.sector;
+            addNewButton(id, x, y);
+            setFloatingButton(previous => ({
+                ...previous,
+                state: 'idle',
+                sector: undefined,
+            }))
         }
-    }, [floatingButton]);
+    }, [floatingButton.state]);
 
-    const addNewButton = (x: number, y: number) => {
+    const addNewButton = (id: number, x: number, y: number) => {
         const newButton = {
-            id: selectedSectorID.current,
+            id: id,
             element: <EditableButton
-                key={selectedSectorID.current}
-                backgroundColor={colors.blue}
+                key={id}
+                backgroundColor={colors.acqua}
                 borderColor={colors.black}
                 command=''
                 initialX={x - 0.5*margin}
@@ -49,6 +46,10 @@ export default function MainSection(){
         }
         setButtons(previous => [...previous, newButton]);
     }
+
+    useEffect(() => {
+        console.log('Setores com botões:', buttons.map(b => b.id));
+    }, [buttons])
 
     const PositionedButtons = useCallback(() => (
         <>{buttons.map(b => b.element)}</>
@@ -79,7 +80,6 @@ export default function MainSection(){
                                 <Sector 
                                     hasAButton={buttons.findIndex(b => b.id === sectors.item) !== -1}
                                     myID={sectors.item}
-                                    onToggleSelection={() => selectedSectorID.current = sectors.item}
                                 />
                             </View>
                         )}
@@ -129,7 +129,7 @@ const style = StyleSheet.create({
 
 
 
-
+//isSelected={floatingButton.sector?.id === sectors.item}
 
 
 

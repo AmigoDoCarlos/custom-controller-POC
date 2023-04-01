@@ -9,7 +9,8 @@ type DraggableButton = {
     state: 'idle' | 'moving' | 'released'
     x: number;
     y: number;
-    sectorXY: {
+    sector: {
+        id: number,
         x: number,
         y: number
     } | undefined, 
@@ -24,7 +25,7 @@ type LocalContext = {
     setGrid: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-const initialDraggableButton: DraggableButton = {state: 'idle', x: 0, y: 0, sectorXY: undefined};
+const initialDraggableButton: DraggableButton = {state: 'idle', x: 0, y: 0, sector: undefined};
 
 const initialContext:LocalContext = {
     grid: false,
