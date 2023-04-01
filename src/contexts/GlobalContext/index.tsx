@@ -1,18 +1,5 @@
-import { createContext, ReactNode, useContext, useState, useEffect } from 'react';
-import { Portuguese, English } from '../../language';
-
-export type Language = {
-    flag: any,
-    defaultUsername: string,
-    welcome: string,
-    chooseLayout: string,
-    login: string,
-    addUser: string,
-    addLayout: string,
-    editControllerText: string,
-    button: string,
-    screen: string,
-}
+import { createContext, ReactNode, useContext, useState } from 'react';
+import { Language, Portuguese } from '../../language';
 
 interface GlobalContextValue {
     username: string | undefined,

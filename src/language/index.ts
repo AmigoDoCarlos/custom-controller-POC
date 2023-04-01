@@ -1,6 +1,21 @@
-import { Language } from "../contexts/GlobalContext"
 import brazil from '../assets/flags/brazil.png';
 import unitedStates from '../assets/flags/united-states.png';
+
+export type Language = {
+    flag: any,
+    defaultUsername: string,
+    welcome: string,
+    chooseLayout: string,
+    login: string,
+    addUser: string,
+    addLayout: string,
+    editController: {
+      idleText: string,
+      expandedText: string,
+    },
+    button: string,
+    screen: string,
+}
 
 export const Portuguese: Language = {
     flag: brazil,
@@ -10,7 +25,10 @@ export const Portuguese: Language = {
     login: 'Quem é você na fila do pão?',
     addUser: 'Novo',
     addLayout: 'Adicionar layout',
-    editControllerText: `Aperte o ícone '+' para inserir um novo elemento...`, 
+    editController: {
+        idleText: `Aperte o ícone '+' para inserir um novo elemento...`,
+        expandedText: `Legal! Agora arraste pra cá o elemento escolhido.`,
+    }, 
     button: 'Botão',
     screen: 'Tela',
 }
@@ -23,7 +41,10 @@ export const English: Language = {
     login: 'Who are you in the line of bread?',
     addUser: 'New',
     addLayout: 'Add new layout',
-    editControllerText: `Press the '+' icon to insert a new element...`, 
+    editController: {
+        idleText: `Press the '+' icon to insert a new element...`,
+        expandedText: `Great! Now drag the chosen element over here.`,
+    }, 
     button: 'Button',
     screen: 'Screen',
 }

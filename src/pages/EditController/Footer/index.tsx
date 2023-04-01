@@ -1,29 +1,56 @@
-import React from 'react';
-import AddButton from '../AddButton';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo, useCallback } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { colors } from '../../../colors';
 import { LogOut, Edit3, Trash2 } from 'react-native-feather';
 import { useEditContext } from '../../../contexts/EditContext';
+import AddButton from '../AddButton';
+
+type Position = {
+    x: number,
+    y: number,
+}
 
 export default function Footer(){
-    const { grid } = useEditContext();
 
-    if(!grid) return (
-        <View style={style.background}>
+    const { grid, floatingButton } = useEditContext();
+    const [XY, setXY] = useState<Position>({x: 0, y: 0});
+
+    const definePosition = (e: any) => {
+        e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+            setXY({x: pageX, y: pageY});
+        })
+    }
+
+    const backgroundStyle = useMemo(() => {
+        if(grid){
+            if(floatingButton.x > XY.x) return style.redBackground;
+            return style.gridBackground;
+        } return style.background;
+    }, [grid, floatingButton]);
+
+    const Icons = useCallback(() => {
+        if(grid) return (
+            <Trash2
+                color={(floatingButton.x > XY.x)? colors.darkGrey : colors.red}
+                width={30}
+                height={30}
+            />
+        ) 
+        return (
             <View style={style.icons}>
                 <LogOut color={colors.acqua} width={30} height={30}/>
                 <Edit3 color={colors.acqua} width={30} height={30}/>
             </View>
+        )
+    }, [grid, floatingButton]);
+
+    
+    return (
+        <View onLayout={definePosition} style={backgroundStyle}>
+            <Icons />
             <View style={style.addButton}>
                 <AddButton/>
             </View>
-        </View>
-    )
-    return (
-        <View style={style.gridBackground}>
-            <TouchableOpacity>
-                <Trash2 color={colors.red} width={30} height={30}/>
-            </TouchableOpacity>
         </View>
     )
 }
@@ -44,6 +71,13 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: colors.darkGrey,
     },
+    redBackground: {
+        width: 60,
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.red,
+    },
     icons: {
         marginTop: 15,
         flexDirection: 'column',
@@ -56,3 +90,24 @@ const style = StyleSheet.create({
         right: 20,
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // return (
+    //     <View style={style.gridBackground}>
+    //         <TouchableOpacity onPress={() => setGrid(false)}>
+    //             <Trash2 color={colors.red} width={30} height={30}/>
+    //         </TouchableOpacity>
+    //     </View>
+    // )

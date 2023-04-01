@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { colors } from '../../colors';
 import EditContext from '../../contexts/EditContext';
 import Footer from './Footer';
 import MainSection from './MainSection';
+import Dummy from './Dummy';
 
 
 export default function EditController(){
@@ -13,6 +14,7 @@ export default function EditController(){
             <StatusBar hidden barStyle={'dark-content'} backgroundColor={colors.darkWhite}/>
             <EditContext>
                 <View style={style.background}>
+                    {/* <Dummy /> */}
                     <View />
                     <MainSection/>
                     <Footer />
