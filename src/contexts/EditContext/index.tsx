@@ -1,39 +1,42 @@
-import React, { ReactNode, useState } from 'react';
+import React, { useEffect, ReactNode, useState } from 'react';
 
-export enum States {
-    Idle,
-    Expand,
+export type Element = {
+    id: number,
+    x: number,
+    y: number,
 }
 
 type DraggableButton = {
     state: 'idle' | 'moving' | 'released'
-    x: number;
-    y: number;
-    sector: {
-        id: number,
-        x: number,
-        y: number
-    } | undefined, 
+    self: Element | undefined,                 //as próprias coordenadas X, Y e o ID do botão sendo movido.
+    sector: Element | undefined,                //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
+}
+
+type PositionedButton = {
+    id: number,
+    backgroundColor: string,
+    borderColor: string,
+    command: string,
+    X: number,
+    Y: number,
+    text: string,
+    textColor: string,
 }
 
 type LocalContext = {
-    grid: boolean,
     floatingButton: DraggableButton,
-    state: States,
+    buttons: PositionedButton[],
     setFloatingButton: React.Dispatch<React.SetStateAction<DraggableButton>>
-    setState: React.Dispatch<React.SetStateAction<States>>,
-    setGrid: React.Dispatch<React.SetStateAction<boolean>>,
+    setButtons: React.Dispatch<React.SetStateAction<PositionedButton[]>>
 }
 
-const initialDraggableButton: DraggableButton = {state: 'idle', x: 0, y: 0, sector: undefined};
+const initialDraggableButton: DraggableButton = {state: 'idle', self: {x: -1, y: -1, id: -1}, sector: undefined};
 
 const initialContext:LocalContext = {
-    grid: false,
     floatingButton: initialDraggableButton,
-    state: States.Idle,
-    setGrid: () => null,
+    buttons: [],
     setFloatingButton: () => null,
-    setState: () => null,
+    setButtons: () => null,
 }
 
 
@@ -48,19 +51,19 @@ export function useEditContext(){
 }
 
 export default function EditProvider(props: EditProviderProps){
-    const [grid, setGrid] = useState(false);
     const [floatingButton, setFloatingButton] = useState<DraggableButton>(initialDraggableButton);
-    const [state, setState] = useState<States>(States.Idle);
-
+    const [buttons, setButtons] = useState<PositionedButton[]>([]);
     const { children } = props;
+
+    useEffect(() => {
+        console.log(buttons.map(b => b.id));
+    }, [buttons]);
     
     const context: LocalContext = {
-        grid,
         floatingButton,
-        state,
-        setGrid,
+        buttons,
         setFloatingButton,
-        setState,
+        setButtons,
     }
 
 return (

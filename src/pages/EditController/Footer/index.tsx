@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { colors } from '../../../colors';
 import { LogOut, Edit3, Trash2 } from 'react-native-feather';
 import { useEditContext } from '../../../contexts/EditContext';
-import AddButton from '../AddButton';
 
 type Position = {
     x: number,
@@ -12,26 +11,28 @@ type Position = {
 
 export default function Footer(){
 
-    const { grid, floatingButton, setFloatingButton } = useEditContext();
+    const { floatingButton, setFloatingButton } = useEditContext();
     const [XY, setXY] = useState<Position>({x: 0, y: 0});
 
     const backgroundStyle = useMemo(() => {
-        if(grid){
-            if(floatingButton.x > XY.x){
+        if(floatingButton.self && floatingButton.state === 'moving'){
+            if(floatingButton.self.x > XY.x){
                 return style.redBackground;
             }
             return style.gridBackground;
         } return style.background;
-    }, [grid, floatingButton]);
+    }, [floatingButton]);
 
     useEffect(() => {
-        if(floatingButton.x > XY.x){
-            return setFloatingButton(previous => ({
-                ...previous,
-                sector: undefined
-            }));
+        if(floatingButton.self){
+            if(floatingButton.self.x < 0 || floatingButton.self.x > XY.x){
+                return setFloatingButton(previous => ({
+                    ...previous,
+                    sector: undefined
+                }));
+            }
         }
-    }, [floatingButton.x])
+    }, [floatingButton.self])
 
     const definePosition = (e: any) => {
         e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
@@ -40,28 +41,29 @@ export default function Footer(){
     }
 
     const Icons = useCallback(() => {
-        if(grid) return (
+        if(floatingButton.state === 'moving') return (
             <Trash2
-                color={(floatingButton.x > XY.x)? colors.darkGrey : colors.red}
+                color={(floatingButton.self && floatingButton.self.x > XY.x)? colors.darkGrey : colors.red}
                 width={30}
                 height={30}
             />
         ) 
         return (
-            <View style={style.icons}>
-                <LogOut color={colors.acqua} width={30} height={30}/>
-                <Edit3 color={colors.acqua} width={30} height={30}/>
-            </View>
+            <>
+                <View style={style.icon}>
+                    <LogOut color={colors.acqua} width={30} height={30}/>
+                </View>
+                <View style={style.icon}>
+                    <Edit3 color={colors.acqua} width={30} height={30}/>
+                </View>
+            </>
         )
-    }, [grid, floatingButton]);
+    }, [floatingButton.self]);
 
     
     return (
         <View onLayout={definePosition} style={backgroundStyle}>
             <Icons />
-            <View style={style.addButton}>
-                <AddButton/>
-            </View>
         </View>
     )
 }
@@ -72,7 +74,6 @@ const style = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         flexDirection: 'column',
-        justifyContent: 'space-between',
         backgroundColor: colors.darkGrey,
     },
     gridBackground: {
@@ -89,36 +90,8 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: colors.red,
     },
-    icons: {
+    icon: {
         marginTop: 15,
-        flexDirection: 'column',
-        height: 90,
-        justifyContent: 'space-between',
-    },
-    addButton: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
+        marginBottom: 15,
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // return (
-    //     <View style={style.gridBackground}>
-    //         <TouchableOpacity onPress={() => setGrid(false)}>
-    //             <Trash2 color={colors.red} width={30} height={30}/>
-    //         </TouchableOpacity>
-    //     </View>
-    // )

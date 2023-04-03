@@ -9,32 +9,39 @@ export type Position = {
     y: number,
 }
 
-const width = 104;
-const height = 62;
+const width = 89;
+const height = 0.7865 * width;
 
 interface SectorProps {
-    hasAButton: boolean,
     myID: number,
 }
 
-export default function Sector({hasAButton, myID}: SectorProps){
+export default function Sector({myID}: SectorProps){
 
-    const { floatingButton, setFloatingButton } = useEditContext();
+    const { buttons, floatingButton, setFloatingButton } = useEditContext();
     const XY = useRef<Position>({x: 0, y: 0});
     const selected = useRef<boolean>(false);
+
+    const hasAButton = (
+        buttons.find(b => b.id === myID) &&
+        floatingButton.self &&
+        floatingButton.self.id !== myID
+    ); 
     
     useEffect(() => {
-        if(floatingButton.x > XY.current.x && floatingButton.x < (XY.current.x + width)){
-            if(floatingButton.y > XY.current.y && floatingButton.y < (XY.current.y + height)){
-                selected.current = true;
+        if(floatingButton.self){
+            if(floatingButton.self.x > XY.current.x && floatingButton.self.x < (XY.current.x + width)){
+                if(floatingButton.self.y > XY.current.y && floatingButton.self.y < (XY.current.y + height)){
+                    selected.current = true;
+                }
+            } else {
+                selected.current = false;
             }
-        } else {
-            selected.current = false;
         }
-    }, [floatingButton]);
+    }, [floatingButton.self]);
 
     useEffect(() => {
-        if(selected.current === true){
+        if(!hasAButton && selected.current === true){
             setFloatingButton(previous => ({
                 ...previous,
                 sector: {

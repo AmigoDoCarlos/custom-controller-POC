@@ -5,8 +5,12 @@ import { colors } from '../../../colors';
 
 export default function Dummy(){
     const { floatingButton } = useEditContext();
-
-    return <View style={{...style.dummy, transform: [{translateX: floatingButton.x}, {translateY: floatingButton.y}]}} />
+    return (
+        <View style={{
+            ...style.dummy,
+            // transform: [{translateX: floatingButton.self.x}, {translateY: floatingButton.self.y}]
+        }} />
+    )
 }
 
 const style = StyleSheet.create({

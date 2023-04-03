@@ -1,67 +1,94 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, StyleSheet, FlatList } from 'react-native';
 import { colors } from '../../../colors';
 import { useGlobalContext } from '../../../contexts/GlobalContext';
-import { States, useEditContext } from '../../../contexts/EditContext';
-import EditableButton from '../EditableButton';
+import { Element, useEditContext } from '../../../contexts/EditContext';
 import Sector from './Sector';
 
-type Button = {
-    id: number,
-    element: JSX.Element,
-}
-
-const sectors = [...Array(24)].map((x, i) => (i));
+const numberOfButtons = 32;
+const numberOfCollumns = 8;
 const margin = 4;
+const sectors = [...Array(numberOfButtons)].map((x, i) => (i));
 
 export default function MainSection(){
-    const { grid, state, floatingButton, setFloatingButton } = useEditContext(); 
+    const { floatingButton, buttons, setFloatingButton, setButtons } = useEditContext(); 
     const { language } = useGlobalContext();
-    const [buttons, setButtons] = useState<Button[]>([]);
+    
 
     useEffect(() => {
-        if(floatingButton.sector && floatingButton.state === 'released'){
-            const {id, x, y} = floatingButton.sector;
-            addNewButton(id, x, y);
+        if(floatingButton.self && floatingButton.state === 'released'){
+            const selfID = floatingButton.self.id;
+
+            if(!floatingButton.sector){
+                removeButton(selfID);
+            } else {    
+                const sectorID = floatingButton.sector.id;
+                
+                if(selfID !== sectorID){                                //se o usuário NÃO devolveu o botão pro mesmo lugar, entra no if
+                    if(buttons.find(b => b.id === selfID)){             //se o usuário mudou um botão já existente para outro setor  
+                        updateButton(selfID, floatingButton.sector);
+                    } else {                                            //já se o usuário simplesmente adicionou um novo botão
+                        const {x, y, id} = floatingButton.sector;
+                        newButton(x, y, id);
+                    }
+                }
+            }
+
+
             setFloatingButton(previous => ({
                 ...previous,
                 state: 'idle',
+                self: undefined,
                 sector: undefined,
             }))
         }
     }, [floatingButton.state]);
 
-    const addNewButton = (id: number, x: number, y: number) => {
-        const newButton = {
+    const newButton = (x: number, y: number, id: number) => {
+        const nb = {
+            X: x - (margin * 0.5),
+            Y: y - (margin * 0.5),
             id: id,
-            element: <EditableButton
-                key={id}
-                backgroundColor={colors.acqua}
-                borderColor={colors.black}
-                command=''
-                initialX={x - 0.5*margin}
-                initialY={y - 0.5*margin}
-                text={language.button}
-            />
+            backgroundColor: colors.acqua,
+            borderColor: colors.black,
+            command: '',
+            text: language.button,
+            textColor: colors.darkWhite,
         }
-        setButtons(previous => [...previous, newButton]);
+        setButtons(previous => [...previous, nb]);
     }
 
-    useEffect(() => {
-        console.log('Setores com botões:', buttons.map(b => b.id));
-    }, [buttons])
+    const updateButton = (fromID: number, destination: Element) => {
+        return setButtons(buttons => buttons.map(button => {
+            if (button.id === fromID){
+                return {
+                    ...button,
+                    X: destination.x,
+                    Y: destination.y,
+                    id: destination.id,
+                }    
+            } return button;
+        }))
+    }
 
-    const PositionedButtons = useCallback(() => (
-        <>{buttons.map(b => b.element)}</>
-    ), [buttons]);
+    const removeButton = (id: number) => {
+        if(id){
+            const index = buttons.findIndex(b => b.id === id);
+            if(index >= 0){
+                const newButtonList = buttons.slice();
+                newButtonList.splice(index, 1);
+                setButtons(newButtonList);
+            }
+        }
+    }
 
-    if(!grid){
+    if(floatingButton.state !== 'moving'){
         if(buttons.length === 0) return (
             <Text style={style.text}>
-                {(state === States.Idle)? language.editController.idleText: language.editController.expandedText}
+                {language.editController.idleText}
             </Text>
-        )
-        return <PositionedButtons/>
+        ) 
+        return <></>
     }    
 
     return (
@@ -71,14 +98,13 @@ export default function MainSection(){
                     <FlatList
                         keyExtractor={item => `${item}`}
                         horizontal={false}
-                        numColumns={6}
+                        numColumns={numberOfCollumns}
                         contentContainerStyle={style.center}
                         style={style.mapView}
                         data={sectors}
                         renderItem={sectors => (
                             <View style={style.sectorContainer}>
                                 <Sector 
-                                    hasAButton={buttons.findIndex(b => b.id === sectors.item) !== -1}
                                     myID={sectors.item}
                                 />
                             </View>
@@ -86,10 +112,11 @@ export default function MainSection(){
                     />
                 </View>
             </View>
-            <PositionedButtons/>
         </>
     )
 }
+
+
 
 const style = StyleSheet.create({
     text: {
@@ -129,17 +156,80 @@ const style = StyleSheet.create({
 
 
 
+
+
+
+
+
+    // const addNewButton = (id: number, x: number, y: number) => {
+    //     const newButton = {
+    //         id: id,
+    //         element: <EditableButton
+    //             key={id}
+    //             myID={id}
+    //             backgroundColor={colors.acqua}
+    //             borderColor={colors.black}
+    //             command=''
+    //             X={x - 0.5*margin}
+    //             Y={y - 0.5*margin}
+    //             text={language.button}
+    //             textColor={colors.darkWhite}
+    //         />
+    //     }
+    //     setButtons(previous => [...previous, newButton]);
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //isSelected={floatingButton.sector?.id === sectors.item}
 
 
+// useEffect(() => {
+//     console.log('Setores com botões:', buttons.map(b => b.id));
+// }, [buttons])
 
 
 
 
 
 
-
-
+// const floatingStyle = {
+//     background: {
+//         width: 108,
+//         height: 66,
+//         borderRadius: 20,
+//         backgroundColor: colors.acqua,
+//         borderColor: colors.black,
+//         borderWidth: 1,
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//     },
+//     text: {
+//         color: colors.darkWhite,
+//         fontSize: 16,
+//     },
+// };
 
 
 
