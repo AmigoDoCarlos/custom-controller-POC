@@ -6,13 +6,21 @@ export type Element = {
     y: number,
 }
 
+export type Hitbox = {
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+}
+
 type DraggableButton = {
     state: 'idle' | 'moving' | 'released'
     self: Element | undefined,                 //as próprias coordenadas X, Y e o ID do botão sendo movido.
     sector: Element | undefined,                //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
+    hitbox: Hitbox | undefined,
 }
 
-type PositionedButton = {
+export type PositionedButton = {
     id: number,
     backgroundColor: string,
     borderColor: string,
@@ -21,6 +29,9 @@ type PositionedButton = {
     Y: number,
     text: string,
     textColor: string,
+    hitboxRatio: number,
+    width: number,
+    height: number,
 }
 
 type LocalContext = {
@@ -30,7 +41,7 @@ type LocalContext = {
     setButtons: React.Dispatch<React.SetStateAction<PositionedButton[]>>
 }
 
-const initialDraggableButton: DraggableButton = {state: 'idle', self: {x: -1, y: -1, id: -1}, sector: undefined};
+const initialDraggableButton: DraggableButton = {state: 'idle', self: {x: -1, y: -1, id: -1}, sector: undefined, hitbox: undefined};
 
 const initialContext:LocalContext = {
     floatingButton: initialDraggableButton,

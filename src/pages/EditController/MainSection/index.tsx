@@ -40,6 +40,7 @@ export default function MainSection(){
                 state: 'idle',
                 self: undefined,
                 sector: undefined,
+                hitbox: undefined,
             }))
         }
     }, [floatingButton.state]);
@@ -54,6 +55,9 @@ export default function MainSection(){
             command: '',
             text: language.button,
             textColor: colors.darkWhite,
+            hitboxRatio: 0.05,
+            width: 89,
+            height: 70,
         }
         setButtons(previous => [...previous, nb]);
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { useEditContext } from '../../../../contexts/EditContext';
 import select from './assets/selected.png';
@@ -17,21 +17,25 @@ interface SectorProps {
 }
 
 export default function Sector({myID}: SectorProps){
-
     const { buttons, floatingButton, setFloatingButton } = useEditContext();
     const XY = useRef<Position>({x: 0, y: 0});
     const selected = useRef<boolean>(false);
 
-    const hasAButton = (
+    const hasAButton = useMemo(() => (
         buttons.find(b => b.id === myID) &&
         floatingButton.self &&
         floatingButton.self.id !== myID
-    ); 
+    ), [buttons, floatingButton.self]); 
     
     useEffect(() => {
-        if(floatingButton.self){
-            if(floatingButton.self.x > XY.current.x && floatingButton.self.x < (XY.current.x + width)){
-                if(floatingButton.self.y > XY.current.y && floatingButton.self.y < (XY.current.y + height)){
+        if(floatingButton.self && floatingButton.hitbox){
+            const hitX = floatingButton.self.x + floatingButton.hitbox.x;
+            const hitY = floatingButton.self.y + floatingButton.hitbox.y; 
+            const hitW = floatingButton.hitbox.w;
+            const hitH = floatingButton.hitbox.y;
+
+            if((XY.current.x < hitX + hitW) && (XY.current.x + width > hitX)){
+                if((XY.current.y < hitY + hitH) && (XY.current.y + height > hitY)){
                     selected.current = true;
                 }
             } else {

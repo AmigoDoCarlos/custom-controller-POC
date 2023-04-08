@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { View, StyleSheet } from "react-native";
 import FloatingButton from "../FloatingButton";
 
 interface EditableButtonProps {
@@ -11,17 +10,21 @@ interface EditableButtonProps {
     textColor: string
     borderColor: string,
     backgroundColor: string,
+    hitboxRatio: number,
+    width: number,
+    height: number,
 }
 
-const width = 89;
-const height = 70;
 
-export default function EditableButton({myID, X, Y, text, command, textColor, borderColor, backgroundColor}: EditableButtonProps){
+export default function EditableButton({myID, X, Y, width, height, hitboxRatio, text, command, textColor, borderColor, backgroundColor}: EditableButtonProps){
 
     const [savedProps, setSavedProps] = useState({
         myID,
         X,
         Y,
+        width, 
+        height,
+        hitboxRatio,
         text,
         command,
         textColor,
@@ -31,8 +34,8 @@ export default function EditableButton({myID, X, Y, text, command, textColor, bo
 
     const floatingStyle:any = useMemo(() => ({
         background: {
-            width: width,
-            height: height,
+            width: savedProps.width,
+            height: savedProps.height,
             borderRadius: 15,
             backgroundColor: savedProps.backgroundColor,
             borderColor: savedProps.borderColor,
@@ -54,6 +57,11 @@ export default function EditableButton({myID, X, Y, text, command, textColor, bo
         <FloatingButton
             myID={myID}
             idleStyle={floatingStyle}
+            hitboxRatio={savedProps.hitboxRatio}
+            size={{
+                w: savedProps.width,
+                h: savedProps.height,
+            }}
         >
             {savedProps.text}
         </FloatingButton>

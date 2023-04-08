@@ -7,6 +7,11 @@ type Coords = {
     y: number,
 }
 
+type Size = {
+    w: number,
+    h: number,
+}
+
 type propsStyle = {
     background: any,
     text: any,
@@ -17,22 +22,31 @@ interface FloatingButtonProps {
     idleStyle: propsStyle,
     movingStyle?: propsStyle,
     notMovingStyle?: propsStyle,
+    size: Size,
+    hitboxRatio: number,
     children: string,
     onStop?: () => void,
 }
 
-const threshold = 20;
-
-export default function FloatingButton({myID, idleStyle, movingStyle, notMovingStyle, children, onStop}: FloatingButtonProps){
+export default function FloatingButton({myID, idleStyle, movingStyle, notMovingStyle, children, size, hitboxRatio, onStop}: FloatingButtonProps){
     const { floatingButton, setFloatingButton } = useEditContext();
-    const initialCoords = useRef<Coords>({x: 0, y: 0});
     const [moving, setMoving] = useState<boolean | undefined>(undefined);
+    const initial = useRef<Coords>({x: 0, y: 0});
     const pan = useRef(new Animated.ValueXY()).current;
 
     const panResponder = useRef(
         PanResponder.create({
           onMoveShouldSetPanResponder: () => true,
           onPanResponderGrant: () => {
+            setFloatingButton(previous => ({
+                ...previous,
+                hitbox: {
+                    w: size.w * hitboxRatio,
+                    h: size.h * hitboxRatio,
+                    x: 0,//Math.abs((1 - hitboxRatio) * 0.5 * size.w),              //don't ask me why, but for some reason these sometimes randomly get negative (which should make no sense);
+                    y: 0
+                }
+            }))
             setMoving(true);
           },
           onPanResponderMove: Animated.event([null, {dx: pan.x, dy: pan.y}], {useNativeDriver: false}),
@@ -42,15 +56,25 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
           },
         }),
     ).current;
+    
+    pan.removeAllListeners();
+    pan.addListener((value) => {
+        if(moving && (initial.current.x > 0) && (initial.current.y > 0)){
+            setFloatingButton(previous => ({
+                ...previous,
+                self: {
+                    id: myID,
+                    x: Math.floor(initial.current.x + value.x),
+                    y: Math.floor(initial.current.y + value.y),
+                }
+            }))
+        }
+    })
 
     useEffect(() => {
         if(typeof moving === 'boolean'){
             if(moving){
-                setFloatingButton({
-                    ...floatingButton,
-                    self: {x: initialCoords.current.x, y: initialCoords.current.y, id: myID},
-                    sector: {x: -1, y: -1, id: myID},
-                });
+                setFloatingButton({...floatingButton, state: 'moving'});
             } else {
                 setFloatingButton({...floatingButton, state: 'released'});
                 onStop && onStop();
@@ -58,27 +82,13 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
         }
     }, [moving]);
 
-    const setInitialCoords = (e: any) => {
+    const definePosition = (e: any) => {
         e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
-            initialCoords.current = {x: pageX, y: pageY};
-        })
-    }
-
-    const updateButtonLocation = (e: any) => {
-        const pageX = e.nativeEvent.pageX;
-        const pageY = e.nativeEvent.pageY;
-        if(floatingButton.self){
-            if((Math.abs(pageX - floatingButton.self.x) + Math.abs(pageY - floatingButton.self.y)) > threshold){
-                setFloatingButton({...floatingButton,
-                    state: 'moving',
-                    self: {
-                        id: floatingButton.self.id,
-                        x: Math.round(e.nativeEvent.pageX),
-                        y: Math.round(e.nativeEvent.pageY),
-                    }
-                })
+            initial.current = {
+                x: pageX,
+                y: pageY,
             }
-        }
+        })
     }
 
     let backgroundStyle = idleStyle.background;
@@ -116,8 +126,7 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
         <Animated.View 
             {...panResponder.panHandlers}
             style={[backgroundStyle, translate]}
-            onLayout={setInitialCoords}
-            onTouchMove={updateButtonLocation}
+            onLayout={definePosition}
         >
             <Text style={textStyle}>
                 {children}
@@ -150,21 +159,14 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
 
 
 
-// const floatingStyle = (type === 'button')
-    // ? style.draggableButton
-    // : style.draggableScreen;
 
-    // const floatingButtonStyle = useMemo(() => {
-    //     if(grid){
-    //         if(moving) return ({...floatingStyle, transform: [{translateX: pan.x}, {translateY: pan.y}]});
-    //         return style.invisible;
-    //     } return style.button;        
-    // }, [grid, moving])
 
-    // const textStyle = useMemo(() => {
-    //     if (moving){
-    //         if(type === 'button') return style.draggableButtonText;
-    //         return style.draggableScreenText;
-    //     }
-    //     return style.buttonText;
-    // }, [moving]);
+
+
+
+
+
+
+
+
+

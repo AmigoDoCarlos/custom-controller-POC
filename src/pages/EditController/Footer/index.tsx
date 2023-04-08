@@ -15,8 +15,10 @@ export default function Footer(){
     const [XY, setXY] = useState<Position>({x: 0, y: 0});
 
     const backgroundStyle = useMemo(() => {
-        if(floatingButton.self && floatingButton.state === 'moving'){
-            if(floatingButton.self.x > XY.x){
+        if(floatingButton.self && floatingButton.hitbox && floatingButton.state === 'moving'){
+            const hit = floatingButton.hitbox;
+            const self = floatingButton.self;
+            if(self.x + hit.x + hit.w > XY.x){
                 return style.redBackground;
             }
             return style.gridBackground;
@@ -24,8 +26,10 @@ export default function Footer(){
     }, [floatingButton]);
 
     useEffect(() => {
-        if(floatingButton.self){
-            if(floatingButton.self.x < 0 || floatingButton.self.x > XY.x){
+        if(floatingButton.self && floatingButton.hitbox){
+            const hit = floatingButton.hitbox;
+            const self = floatingButton.self;
+            if(self.x + hit.x + hit.w > XY.x){
                 return setFloatingButton(previous => ({
                     ...previous,
                     sector: undefined
@@ -41,9 +45,12 @@ export default function Footer(){
     }
 
     const Icons = useCallback(() => {
+        const hit = floatingButton.hitbox;
+        const self = floatingButton.self;
+        
         if(floatingButton.state === 'moving') return (
             <Trash2
-                color={(floatingButton.self && floatingButton.self.x > XY.x)? colors.darkGrey : colors.red}
+                color={(self && hit && self.x + hit.x + hit.w > XY.x)? colors.darkGrey : colors.red}
                 width={30}
                 height={30}
             />

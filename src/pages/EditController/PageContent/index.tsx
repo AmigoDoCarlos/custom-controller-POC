@@ -23,6 +23,9 @@ export default function PageContent(){
                 textColor={button.textColor}
                 text={button.text}
                 command=""
+                hitboxRatio={button.hitboxRatio}
+                width={button.width}
+                height={button.height}
             />
         ))
     ), [buttons]);

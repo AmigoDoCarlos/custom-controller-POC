@@ -29,11 +29,6 @@ export default function AddButton(){
         return null;
     }, [floatingButton.state]);
 
-    const screenButtonStyle = useMemo(() => {
-        if(floatingButton.state === 'moving') return ({transform: [{translateX: 80}]});
-        return null;
-    }, [floatingButton.state]);
-
     switch(state){
         case States.Expanded: return (
             <View style={style.inline}>
@@ -47,16 +42,26 @@ export default function AddButton(){
                         idleStyle={floatingStyle.idle}
                         movingStyle={floatingStyle.movingButton}
                         notMovingStyle={floatingStyle.invisible}
+                        size= {{
+                            w: floatingStyle.movingButton.background.width,
+                            h: floatingStyle.movingButton.background.height,
+                        }}
+                        hitboxRatio={0.1}
                     >
                         {language.button}
                     </FloatingButton>
-                    <View style={screenButtonStyle}>
+                    <View>
                         <FloatingButton
                             myID={200}
                             onStop={() => setState(States.Retracted)}
                             idleStyle={floatingStyle.idle}
                             movingStyle={floatingStyle.movingScreen}
                             notMovingStyle={floatingStyle.invisible}
+                            size= {{
+                                w: floatingStyle.movingScreen.background.width,
+                                h: floatingStyle.movingScreen.background.height,
+                            }}
+                            hitboxRatio={0.45}
                         >
                             {language.screen}
                         </FloatingButton>
@@ -167,3 +172,6 @@ const floatingStyle = {
         }
     }
 };
+
+
+
