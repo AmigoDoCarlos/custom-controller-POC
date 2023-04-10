@@ -18,7 +18,7 @@ export default function Footer(){
         if(floatingButton.self && floatingButton.hitbox && floatingButton.state === 'moving'){
             const hit = floatingButton.hitbox;
             const self = floatingButton.self;
-            if(self.x + hit.x + hit.w > XY.x){
+            if(self.x + hit.w > XY.x){
                 return style.redBackground;
             }
             return style.gridBackground;
@@ -29,10 +29,13 @@ export default function Footer(){
         if(floatingButton.self && floatingButton.hitbox){
             const hit = floatingButton.hitbox;
             const self = floatingButton.self;
-            if(self.x + hit.x + hit.w > XY.x){
+            if(self.x + hit.w > XY.x){
                 return setFloatingButton(previous => ({
                     ...previous,
-                    sector: undefined
+                    sectors: previous.sectors.map(s => ({
+                        ...s,
+                        selected: false,
+                    }))
                 }));
             }
         }
@@ -50,7 +53,7 @@ export default function Footer(){
         
         if(floatingButton.state === 'moving') return (
             <Trash2
-                color={(self && hit && self.x + hit.x + hit.w > XY.x)? colors.darkGrey : colors.red}
+                color={(self && hit && self.x + hit.w > XY.x)? colors.darkGrey : colors.red}
                 width={30}
                 height={30}
             />

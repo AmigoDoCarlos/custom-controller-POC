@@ -2,13 +2,8 @@ import React, { useEffect } from 'react';
 import { Text, View, StyleSheet, FlatList } from 'react-native';
 import { colors } from '../../../colors';
 import { useGlobalContext } from '../../../contexts/GlobalContext';
-import { Element, useEditContext } from '../../../contexts/EditContext';
+import { Element, useEditContext, numberOfButtons, numberOfCollumns, margin, sectors } from '../../../contexts/EditContext';
 import Sector from './Sector';
-
-const numberOfButtons = 32;
-const numberOfCollumns = 8;
-const margin = 4;
-const sectors = [...Array(numberOfButtons)].map((x, i) => (i));
 
 export default function MainSection(){
     const { floatingButton, buttons, setFloatingButton, setButtons } = useEditContext(); 
@@ -18,28 +13,31 @@ export default function MainSection(){
     useEffect(() => {
         if(floatingButton.self && floatingButton.state === 'released'){
             const selfID = floatingButton.self.id;
+            const selection = floatingButton.sectors.filter(s => s.selected);
 
-            if(!floatingButton.sector){
-                removeButton(selfID);
-            } else {    
-                const sectorID = floatingButton.sector.id;
-                
-                if(selfID !== sectorID){                                //se o usuário NÃO devolveu o botão pro mesmo lugar, entra no if
-                    if(buttons.find(b => b.id === selfID)){             //se o usuário mudou um botão já existente para outro setor  
-                        updateButton(selfID, floatingButton.sector);
-                    } else {                                            //já se o usuário simplesmente adicionou um novo botão
-                        const {x, y, id} = floatingButton.sector;
-                        newButton(x, y, id);
+            if(selection.length === 0){
+               removeButton(selfID); 
+            } else {   
+                selection.forEach(sector => {
+                    if(selfID !== sector.element.id){                                //se o usuário NÃO devolveu o botão pro mesmo lugar, entra no if
+                        if(buttons.find(b => b.id === selfID)){                      //se o usuário mudou um botão já existente para outro setor  
+                            updateButton(selfID, sector.element);
+                        } else {                                                     //já se o usuário simplesmente adicionou um novo botão
+                            const {x, y, id} = sector.element;
+                            newButton(x, y, id);
+                        }
                     }
-                }
+                })
             }
-
 
             setFloatingButton(previous => ({
                 ...previous,
                 state: 'idle',
                 self: undefined,
-                sector: undefined,
+                sectors: previous.sectors.map(s => ({
+                    ...s,
+                    selected: false,
+                })),
                 hitbox: undefined,
             }))
         }
@@ -78,6 +76,7 @@ export default function MainSection(){
     const removeButton = (id: number) => {
         if(id){
             const index = buttons.findIndex(b => b.id === id);
+            console.log('removendo setor ', id, '->', buttons.map(b => b.id), index);
             if(index >= 0){
                 const newButtonList = buttons.slice();
                 newButtonList.splice(index, 1);

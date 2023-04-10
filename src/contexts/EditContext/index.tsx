@@ -7,16 +7,19 @@ export type Element = {
 }
 
 export type Hitbox = {
-    x: number,
-    y: number,
     w: number,
     h: number,
+}
+
+export type SectorType = {
+    element: Element,
+    selected: boolean,
 }
 
 type DraggableButton = {
     state: 'idle' | 'moving' | 'released'
     self: Element | undefined,                 //as próprias coordenadas X, Y e o ID do botão sendo movido.
-    sector: Element | undefined,                //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
+    sectors: SectorType[],                     //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
     hitbox: Hitbox | undefined,
 }
 
@@ -41,7 +44,21 @@ type LocalContext = {
     setButtons: React.Dispatch<React.SetStateAction<PositionedButton[]>>
 }
 
-const initialDraggableButton: DraggableButton = {state: 'idle', self: {x: -1, y: -1, id: -1}, sector: undefined, hitbox: undefined};
+export const numberOfButtons = 32;
+export const numberOfCollumns = 8;
+export const margin = 4;
+export const sectors = [...Array(numberOfButtons)].map((x, i) => (i));
+
+const initialSectors: SectorType[] = sectors.map(id => ({
+    selected: false,
+    element: {
+        id: id,
+        x: -1,
+        y: -1,
+    }
+}));
+
+const initialDraggableButton: DraggableButton = {state: 'idle', self: {x: -1, y: -1, id: -1}, sectors: initialSectors, hitbox: undefined};
 
 const initialContext:LocalContext = {
     floatingButton: initialDraggableButton,
@@ -49,7 +66,6 @@ const initialContext:LocalContext = {
     setFloatingButton: () => null,
     setButtons: () => null,
 }
-
 
 interface EditProviderProps {
     children: ReactNode;
@@ -66,10 +82,10 @@ export default function EditProvider(props: EditProviderProps){
     const [buttons, setButtons] = useState<PositionedButton[]>([]);
     const { children } = props;
 
-    useEffect(() => {
-        console.log(buttons.map(b => b.id));
-    }, [buttons]);
-    
+    // useEffect(() => {
+    //     console.log(buttons.map(b => b.id));
+    // }, [buttons]);
+
     const context: LocalContext = {
         floatingButton,
         buttons,

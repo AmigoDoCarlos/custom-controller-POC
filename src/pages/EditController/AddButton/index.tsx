@@ -29,6 +29,13 @@ export default function AddButton(){
         return null;
     }, [floatingButton.state]);
 
+    const offset = useMemo(() => {
+        if(floatingButton.state === 'moving') return (
+            { transform: [{translateX: 80}] }
+        );
+        return null;
+    }, [floatingButton.state]);
+
     switch(state){
         case States.Expanded: return (
             <View style={style.inline}>
@@ -46,11 +53,11 @@ export default function AddButton(){
                             w: floatingStyle.movingButton.background.width,
                             h: floatingStyle.movingButton.background.height,
                         }}
-                        hitboxRatio={0.1}
+                        hitboxRatio={0.05}
                     >
                         {language.button}
                     </FloatingButton>
-                    <View>
+                    <View style={offset}>
                         <FloatingButton
                             myID={200}
                             onStop={() => setState(States.Retracted)}
@@ -140,6 +147,7 @@ const floatingStyle = {
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 10,
+            opacity: 0.75,
         },
         text: {
             color: colors.darkWhite,
@@ -149,14 +157,15 @@ const floatingStyle = {
     movingScreen: {
         background: {
             backgroundColor: colors.darkWhite,
-            width: 214,
-            height: 136,
+            width: 170,
+            height: 140,
             borderRadius: 10,
             borderWidth: 1,
             borderColor: 'black',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 10,
+            opacity: 0.75,
         },
         text: {
             color: colors.black,

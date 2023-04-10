@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Text, Animated, PanResponder } from "react-native";
+import { Text, Animated, PanResponder, View, StyleSheet } from "react-native";
 import { useEditContext } from "../../../contexts/EditContext";
 
 type Coords = {
@@ -43,8 +43,6 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
                 hitbox: {
                     w: size.w * hitboxRatio,
                     h: size.h * hitboxRatio,
-                    x: 0,//Math.abs((1 - hitboxRatio) * 0.5 * size.w),              //don't ask me why, but for some reason these sometimes randomly get negative (which should make no sense);
-                    y: 0
                 }
             }))
             setMoving(true);
@@ -82,15 +80,6 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
         }
     }, [moving]);
 
-    const definePosition = (e: any) => {
-        e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
-            initial.current = {
-                x: pageX,
-                y: pageY,
-            }
-        })
-    }
-
     let backgroundStyle = idleStyle.background;
     let textStyle = idleStyle.text;  
 
@@ -119,6 +108,15 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
         }
     }
 
+    const definePosition = (e: any) => {
+        e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+            initial.current = {
+                x: pageX,
+                y: pageY,
+            }
+        })
+    }
+
     const translate = (moving)
     ? { transform: [{translateX: pan.x}, {translateY: pan.y}] } : {};
 
@@ -126,11 +124,12 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
         <Animated.View 
             {...panResponder.panHandlers}
             style={[backgroundStyle, translate]}
-            onLayout={definePosition}
-        >
-            <Text style={textStyle}>
-                {children}
-            </Text>
+        >   
+            <View onLayout={definePosition}>
+                <Text style={textStyle}>
+                    {children}
+                </Text>
+            </View>
         </Animated.View>
     )
 }
@@ -169,4 +168,11 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
 
 
 
-
+// const definePosition = (e: any) => {
+//     e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+//         initial.current = {
+//             x: pageX,
+//             y: pageY,
+//         }
+//     })
+// }
