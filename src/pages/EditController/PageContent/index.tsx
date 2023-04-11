@@ -14,6 +14,7 @@ export default function PageContent(){
     const positionedButtons = useMemo(() => (
         buttons.map(button => (
             <EditableButton
+                type={button.type}
                 key={button.id}
                 myID={button.id}
                 X={button.X}

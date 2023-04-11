@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, TouchableHighlight } from 'react-native';
 import { useGlobalContext } from '../../../contexts/GlobalContext';
-import { useEditContext } from '../../../contexts/EditContext';
+import { ElementType, useEditContext } from '../../../contexts/EditContext';
 import { colors } from '../../../colors';
 import { Plus, X } from 'react-native-feather';
 import FloatingButton from '../FloatingButton';
@@ -43,7 +43,8 @@ export default function AddButton(){
                     <X color={colors.red} width={50} height={50}/>
                 </TouchableOpacity>
                 <View style={buttonStyle}>
-                    <FloatingButton 
+                    <FloatingButton
+                        type={ElementType.button} 
                         myID={100}
                         onStop={() => setState(States.Retracted)}
                         idleStyle={floatingStyle.idle}
@@ -59,6 +60,7 @@ export default function AddButton(){
                     </FloatingButton>
                     <View style={offset}>
                         <FloatingButton
+                            type={ElementType.screen} 
                             myID={200}
                             onStop={() => setState(States.Retracted)}
                             idleStyle={floatingStyle.idle}

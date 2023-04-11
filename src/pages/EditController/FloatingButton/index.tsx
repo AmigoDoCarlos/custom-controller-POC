@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Text, Animated, PanResponder, View, StyleSheet } from "react-native";
-import { useEditContext } from "../../../contexts/EditContext";
+import { ElementType, useEditContext } from "../../../contexts/EditContext";
 
 type Coords = {
     x: number,
@@ -18,6 +18,7 @@ type propsStyle = {
 }
 
 interface FloatingButtonProps {
+    type: ElementType
     myID: number,
     idleStyle: propsStyle,
     movingStyle?: propsStyle,
@@ -28,7 +29,7 @@ interface FloatingButtonProps {
     onStop?: () => void,
 }
 
-export default function FloatingButton({myID, idleStyle, movingStyle, notMovingStyle, children, size, hitboxRatio, onStop}: FloatingButtonProps){
+export default function FloatingButton({type, myID, idleStyle, movingStyle, notMovingStyle, children, size, hitboxRatio, onStop}: FloatingButtonProps){
     const { floatingButton, setFloatingButton } = useEditContext();
     const [moving, setMoving] = useState<boolean | undefined>(undefined);
     const initial = useRef<Coords>({x: 0, y: 0});
@@ -40,6 +41,7 @@ export default function FloatingButton({myID, idleStyle, movingStyle, notMovingS
           onPanResponderGrant: () => {
             setFloatingButton(previous => ({
                 ...previous,
+                type: type,
                 hitbox: {
                     w: size.w * hitboxRatio,
                     h: size.h * hitboxRatio,

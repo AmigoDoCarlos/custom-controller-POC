@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Text, View, StyleSheet, FlatList } from 'react-native';
 import { colors } from '../../../colors';
 import { useGlobalContext } from '../../../contexts/GlobalContext';
-import { Element, useEditContext, numberOfButtons, numberOfCollumns, margin, sectors } from '../../../contexts/EditContext';
+import { Element, useEditContext, numberOfCollumns, margin, sectors, ElementType } from '../../../contexts/EditContext';
 import Sector from './Sector';
 
 export default function MainSection(){
@@ -16,23 +16,36 @@ export default function MainSection(){
             const selection = floatingButton.sectors.filter(s => s.selected);
 
             if(selection.length === 0){
-               removeButton(selfID); 
+               removeElement(selfID); 
             } else {   
-                selection.forEach(sector => {
+                if(floatingButton.type === ElementType.button){              
+                    const sector = selection[0];
                     if(selfID !== sector.element.id){                                //se o usuário NÃO devolveu o botão pro mesmo lugar, entra no if
                         if(buttons.find(b => b.id === selfID)){                      //se o usuário mudou um botão já existente para outro setor  
-                            updateButton(selfID, sector.element);
+                            updateElement(selfID, sector.element);
                         } else {                                                     //já se o usuário simplesmente adicionou um novo botão
                             const {x, y, id} = sector.element;
-                            newButton(x, y, id);
+                            newElement(ElementType.button, x, y, id);
                         }
                     }
-                })
+                }
+                else if(floatingButton.type === ElementType.screen){
+                    const baseSector = selection[0];
+                    if(selection.length === 4){
+                        if(buttons.find(b => b.id === selfID)){                       
+                            updateElement(selfID, baseSector.element);
+                        } else {                                                     
+                            const {x, y, id} = baseSector.element;
+                            newElement(ElementType.screen, x, y, id);
+                        }
+                    }
+                }
             }
 
             setFloatingButton(previous => ({
                 ...previous,
                 state: 'idle',
+                type: undefined,
                 self: undefined,
                 sectors: previous.sectors.map(s => ({
                     ...s,
@@ -43,24 +56,44 @@ export default function MainSection(){
         }
     }, [floatingButton.state]);
 
-    const newButton = (x: number, y: number, id: number) => {
+
+    const newElement = (type: ElementType, x: number, y: number, id: number) => {
+        const props = (type === ElementType.button)? {
+            text: language.button,
+            color: colors.darkWhite,
+            background: colors.acqua, 
+            width: 89,
+            height: 70,
+            hitboxRatio: 0.05,
+        } : {
+            text: language.screen,
+            color: colors.black,
+            background: colors.darkWhite, 
+            width: 178,
+            height: 140,
+            hitboxRatio: 0.45,
+        };
+
         const nb = {
+            type: type,
             X: x - (margin * 0.5),
             Y: y - (margin * 0.5),
             id: id,
-            backgroundColor: colors.acqua,
+            backgroundColor: props.background,
             borderColor: colors.black,
             command: '',
-            text: language.button,
-            textColor: colors.darkWhite,
-            hitboxRatio: 0.05,
-            width: 89,
-            height: 70,
+            text: props.text,
+            textColor: props.color,
+            hitboxRatio: props.hitboxRatio,
+            width: props.width,
+            height: props.height,
         }
+
         setButtons(previous => [...previous, nb]);
     }
 
-    const updateButton = (fromID: number, destination: Element) => {
+
+    const updateElement = (fromID: number, destination: Element) => {
         return setButtons(buttons => buttons.map(button => {
             if (button.id === fromID){
                 return {
@@ -73,10 +106,11 @@ export default function MainSection(){
         }))
     }
 
-    const removeButton = (id: number) => {
+    
+    const removeElement = (id: number) => {
         if(id){
             const index = buttons.findIndex(b => b.id === id);
-            console.log('removendo setor ', id, '->', buttons.map(b => b.id), index);
+            console.log('removendo elemento ', id, '->', buttons.map(b => b.id), index);
             if(index >= 0){
                 const newButtonList = buttons.slice();
                 newButtonList.splice(index, 1);
@@ -84,6 +118,7 @@ export default function MainSection(){
             }
         }
     }
+
 
     if(floatingButton.state !== 'moving'){
         if(buttons.length === 0) return (
@@ -146,136 +181,3 @@ const style = StyleSheet.create({
         margin: margin,
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // const addNewButton = (id: number, x: number, y: number) => {
-    //     const newButton = {
-    //         id: id,
-    //         element: <EditableButton
-    //             key={id}
-    //             myID={id}
-    //             backgroundColor={colors.acqua}
-    //             borderColor={colors.black}
-    //             command=''
-    //             X={x - 0.5*margin}
-    //             Y={y - 0.5*margin}
-    //             text={language.button}
-    //             textColor={colors.darkWhite}
-    //         />
-    //     }
-    //     setButtons(previous => [...previous, newButton]);
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//isSelected={floatingButton.sector?.id === sectors.item}
-
-
-// useEffect(() => {
-//     console.log('Setores com botões:', buttons.map(b => b.id));
-// }, [buttons])
-
-
-
-
-
-
-// const floatingStyle = {
-//     background: {
-//         width: 108,
-//         height: 66,
-//         borderRadius: 20,
-//         backgroundColor: colors.acqua,
-//         borderColor: colors.black,
-//         borderWidth: 1,
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-//     text: {
-//         color: colors.darkWhite,
-//         fontSize: 16,
-//     },
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const manageSelection = (sectorID: number, state: boolean) => {
-    //     const sects = selectedSectors.current.slice();
-    //     const index = sects.findIndex(s => s === sectorID);
-    //     if(state === true){
-    //         if(index > -1) return;
-    //         sects.push(sectorID);
-    //     } else {
-    //         if(index < 0) return;
-    //         sects.splice(index, 1);
-    //     }
-    //     selectedSectors.current = sects;
-    // }
-
-
-// useEffect(() => {
-    //     if(floatingButton.state === 'released'){
-    //         const last = selectedSectors.current.length - 1;
-    //         setFloatingButton({...floatingButton, state: 'idle'});  
-    //         setButtons(previous => [...previous, newButton]);
-    //         }
-    //         selectedPosition.current = (undefined);
-    //     }
-    // }, [floatingButton]);
-
-
-
-{/* <Text style={style.coordinates}>
-    Posicione o elemento onde você deseja que ele fique.
-</Text> */}

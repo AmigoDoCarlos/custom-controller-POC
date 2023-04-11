@@ -1,5 +1,10 @@
 import React, { useEffect, ReactNode, useState } from 'react';
 
+export enum ElementType {
+    button,
+    screen,
+}
+
 export type Element = {
     id: number,
     x: number,
@@ -18,13 +23,15 @@ export type SectorType = {
 
 type DraggableButton = {
     state: 'idle' | 'moving' | 'released'
+    type: ElementType | undefined,
     self: Element | undefined,                 //as próprias coordenadas X, Y e o ID do botão sendo movido.
     sectors: SectorType[],                     //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
     hitbox: Hitbox | undefined,
 }
 
-export type PositionedButton = {
+export type PositionedElement = {
     id: number,
+    type: ElementType,
     backgroundColor: string,
     borderColor: string,
     command: string,
@@ -39,9 +46,9 @@ export type PositionedButton = {
 
 type LocalContext = {
     floatingButton: DraggableButton,
-    buttons: PositionedButton[],
+    buttons: PositionedElement[],
     setFloatingButton: React.Dispatch<React.SetStateAction<DraggableButton>>
-    setButtons: React.Dispatch<React.SetStateAction<PositionedButton[]>>
+    setButtons: React.Dispatch<React.SetStateAction<PositionedElement[]>>
 }
 
 export const numberOfButtons = 32;
@@ -58,7 +65,17 @@ const initialSectors: SectorType[] = sectors.map(id => ({
     }
 }));
 
-const initialDraggableButton: DraggableButton = {state: 'idle', self: {x: -1, y: -1, id: -1}, sectors: initialSectors, hitbox: undefined};
+const initialDraggableButton: DraggableButton = {
+    state: 'idle', 
+    self: {
+        x: -1,
+        y: -1,
+        id: -1
+    }, 
+    sectors: initialSectors,
+    type: undefined,
+    hitbox: undefined,
+};
 
 const initialContext:LocalContext = {
     floatingButton: initialDraggableButton,
@@ -79,7 +96,7 @@ export function useEditContext(){
 
 export default function EditProvider(props: EditProviderProps){
     const [floatingButton, setFloatingButton] = useState<DraggableButton>(initialDraggableButton);
-    const [buttons, setButtons] = useState<PositionedButton[]>([]);
+    const [buttons, setButtons] = useState<PositionedElement[]>([]);
     const { children } = props;
 
     // useEffect(() => {

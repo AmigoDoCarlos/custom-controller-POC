@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from "react";
 import FloatingButton from "../FloatingButton";
+import { ElementType } from "../../../contexts/EditContext";
 
 interface EditableButtonProps {
+    type: ElementType,
     myID: number,
     X: number,
     Y: number,
@@ -16,9 +18,10 @@ interface EditableButtonProps {
 }
 
 
-export default function EditableButton({myID, X, Y, width, height, hitboxRatio, text, command, textColor, borderColor, backgroundColor}: EditableButtonProps){
+export default function EditableButton({type, myID, X, Y, width, height, hitboxRatio, text, command, textColor, borderColor, backgroundColor}: EditableButtonProps){
 
     const [savedProps, setSavedProps] = useState({
+        type,
         myID,
         X,
         Y,
@@ -32,7 +35,7 @@ export default function EditableButton({myID, X, Y, width, height, hitboxRatio, 
         backgroundColor,
     });
 
-    const floatingStyle:any = useMemo(() => ({
+    const idleStyle:any = useMemo(() => ({
         background: {
             width: savedProps.width,
             height: savedProps.height,
@@ -55,8 +58,16 @@ export default function EditableButton({myID, X, Y, width, height, hitboxRatio, 
 
     return (
         <FloatingButton
+            type={type}
             myID={myID}
-            idleStyle={floatingStyle}
+            idleStyle={idleStyle}
+            movingStyle={{
+                ...idleStyle,
+                background: {
+                    ...idleStyle.background,
+                    opacity: 0.75,
+                },
+            }}
             hitboxRatio={savedProps.hitboxRatio}
             size={{
                 w: savedProps.width,
