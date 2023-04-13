@@ -47,33 +47,6 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    background: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: colors.blue,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    expandBackground: {
-        width: 220,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: colors.blue,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-    },
-    noBackground: {
-        width: 220,
-        height: 80,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0)',
-    },
-    invisible: {
-        display: 'none',
-    },
     innerButton: {
         width: 80,
         height: 40,

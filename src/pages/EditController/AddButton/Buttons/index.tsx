@@ -45,7 +45,7 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                     {`${language.button} 1x1`}
                 </FloatingButton>
                 <FloatingButton
-                    type={ElementType.button1x1} 
+                    type={ElementType.button1x2} 
                     myID={100}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
@@ -55,12 +55,12 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                         w: floatingStyle.movingButton.background.width,
                         h: floatingStyle.movingButton.background.height,
                     }}
-                    hitboxRatio={0.05}
+                    hitboxRatio={0.25}
                 >
                     {`${language.button} 1x2`}
                 </FloatingButton>
                 <FloatingButton
-                    type={ElementType.button1x1} 
+                    type={ElementType.button2x1} 
                     myID={100}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
@@ -70,7 +70,7 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                         w: floatingStyle.movingButton.background.width,
                         h: floatingStyle.movingButton.background.height,
                     }}
-                    hitboxRatio={0.05}
+                    hitboxRatio={0.25}
                 >
                     {`${language.button} 2x1`}
                 </FloatingButton>

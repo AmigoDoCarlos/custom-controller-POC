@@ -87,7 +87,6 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
 
     if(floatingButton.state === 'moving'){
         if(moving){
-            textStyle
             if(movingStyle){
                 backgroundStyle = {
                     ...backgroundStyle,
