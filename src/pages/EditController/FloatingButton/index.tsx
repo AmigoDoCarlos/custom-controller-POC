@@ -37,7 +37,7 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
 
     const panResponder = useRef(
         PanResponder.create({
-          onMoveShouldSetPanResponder: () => true,
+          onMoveShouldSetPanResponder: () => floatingButton.state !== 'moving',
           onPanResponderGrant: () => {
             setFloatingButton(previous => ({
                 ...previous,

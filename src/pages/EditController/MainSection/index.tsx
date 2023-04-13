@@ -18,25 +18,25 @@ export default function MainSection(){
             if(selection.length === 0){
                removeElement(selfID); 
             } else {   
-                if(floatingButton.type === ElementType.button){              
+                if(floatingButton.type === ElementType.button1x1){              
                     const sector = selection[0];
                     if(selfID !== sector.element.id){                                //se o usuário NÃO devolveu o botão pro mesmo lugar, entra no if
                         if(buttons.find(b => b.id === selfID)){                      //se o usuário mudou um botão já existente para outro setor  
                             updateElement(selfID, sector.element);
                         } else {                                                     //já se o usuário simplesmente adicionou um novo botão
                             const {x, y, id} = sector.element;
-                            newElement(ElementType.button, x, y, id);
+                            newElement(ElementType.button1x1, x, y, id);
                         }
                     }
                 }
-                else if(floatingButton.type === ElementType.screen){
+                else if(floatingButton.type === ElementType.screen2x2){
                     const baseSector = selection[0];
                     if(selection.length === 4){
                         if(buttons.find(b => b.id === selfID)){                       
                             updateElement(selfID, baseSector.element);
                         } else {                                                     
                             const {x, y, id} = baseSector.element;
-                            newElement(ElementType.screen, x, y, id);
+                            newElement(ElementType.screen2x2, x, y, id);
                         }
                     }
                 }
@@ -58,7 +58,7 @@ export default function MainSection(){
 
 
     const newElement = (type: ElementType, x: number, y: number, id: number) => {
-        const props = (type === ElementType.button)? {
+        const props = (type === ElementType.button1x1)? {
             text: language.button,
             color: colors.darkWhite,
             background: colors.acqua, 

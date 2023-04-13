@@ -1,8 +1,12 @@
 import React, { useEffect, ReactNode, useState } from 'react';
 
 export enum ElementType {
-    button,
-    screen,
+    button1x1,
+    button1x2,
+    button2x1,
+    screen2x1,
+    screen2x2,
+    screen4x2,
 }
 
 export type Element = {

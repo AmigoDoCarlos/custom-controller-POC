@@ -1,27 +1,46 @@
 import React, { useMemo, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TouchableHighlight, Text } from 'react-native';
 import { useGlobalContext } from '../../../contexts/GlobalContext';
-import { ElementType, useEditContext } from '../../../contexts/EditContext';
+import { useEditContext } from '../../../contexts/EditContext';
 import { colors } from '../../../colors';
 import { Plus, X } from 'react-native-feather';
-import FloatingButton from '../FloatingButton';
+import Buttons from './Buttons';
+import Screens from './Screens';
+import Expand from './Expand';
 
-enum States {
+enum AddButtonStates {
     Retracted,
     Expanded,
+    ExpandedButtons,
+    ExpandedScreens,
 }
 
 export default function AddButton(){
-    const { language } = useGlobalContext();
     const { floatingButton } = useEditContext();
-    const [state, setState] = useState<States>(States.Retracted);
+    const [state, setState] = useState<AddButtonStates>(AddButtonStates.Retracted);
     
     const buttonStyle = useMemo(() => {
-        if(state === States.Expanded){
-            if(floatingButton.state === 'moving') return style.noBackground;
-            return style.expandBackground;
+        const invisible = (floatingButton.state === 'moving')
+        ? { backgroundColor: 'rgba(0,0,0,0)'}
+        : null;
+
+        switch(state){
+            case AddButtonStates.Expanded:
+                return style.expandBackground;
+            case AddButtonStates.ExpandedScreens:
+                return {
+                    ...style.expandBackground,
+                    ...invisible,
+                    width: 300,   
+                }
+            case AddButtonStates.ExpandedButtons:
+                return {
+                    ...style.expandBackground,
+                    ...invisible,
+                    width: 300,   
+                }
+            default: return style.background; 
         }
-        return style.background;
     }, [state, floatingButton.state]);  
 
     const exitButtonStyle = useMemo(() => {
@@ -29,57 +48,30 @@ export default function AddButton(){
         return null;
     }, [floatingButton.state]);
 
-    const offset = useMemo(() => {
-        if(floatingButton.state === 'moving') return (
-            { transform: [{translateX: 80}] }
-        );
-        return null;
-    }, [floatingButton.state]);
-
     switch(state){
-        case States.Expanded: return (
-            <View style={style.inline}>
-                <TouchableOpacity style={exitButtonStyle} onPress={() => setState(States.Retracted)}>
-                    <X color={colors.red} width={50} height={50}/>
-                </TouchableOpacity>
-                <View style={buttonStyle}>
-                    <FloatingButton
-                        type={ElementType.button} 
-                        myID={100}
-                        onStop={() => setState(States.Retracted)}
-                        idleStyle={floatingStyle.idle}
-                        movingStyle={floatingStyle.movingButton}
-                        notMovingStyle={floatingStyle.invisible}
-                        size= {{
-                            w: floatingStyle.movingButton.background.width,
-                            h: floatingStyle.movingButton.background.height,
-                        }}
-                        hitboxRatio={0.05}
-                    >
-                        {language.button}
-                    </FloatingButton>
-                    <View style={offset}>
-                        <FloatingButton
-                            type={ElementType.screen} 
-                            myID={200}
-                            onStop={() => setState(States.Retracted)}
-                            idleStyle={floatingStyle.idle}
-                            movingStyle={floatingStyle.movingScreen}
-                            notMovingStyle={floatingStyle.invisible}
-                            size= {{
-                                w: floatingStyle.movingScreen.background.width,
-                                h: floatingStyle.movingScreen.background.height,
-                            }}
-                            hitboxRatio={0.45}
-                        >
-                            {language.screen}
-                        </FloatingButton>
-                    </View>
-                </View>
-            </View>
+        case AddButtonStates.Expanded: return (
+            <Expand
+                backgroundStyle={buttonStyle}
+                exitButtonStyle={exitButtonStyle}
+                changeState={setState}
+            />
+        );
+        case AddButtonStates.ExpandedButtons: return (
+            <Buttons
+                backgroundStyle={buttonStyle}
+                exitButtonStyle={exitButtonStyle}
+                changeState={setState}
+            />
+        );
+        case AddButtonStates.ExpandedScreens: return (
+            <Screens
+                backgroundStyle={buttonStyle}
+                exitButtonStyle={exitButtonStyle}
+                changeState={setState}
+            />
         )
         default: return (
-            <TouchableHighlight underlayColor={colors.clickBlue} style={buttonStyle} onPress={() => setState(States.Expanded)}>
+            <TouchableHighlight underlayColor={colors.clickBlue} style={buttonStyle} onPress={() => setState(AddButtonStates.Expanded)}>
                 <Plus color={colors.darkWhite} width={50} height={50}/>
             </TouchableHighlight>
         )
@@ -88,10 +80,6 @@ export default function AddButton(){
 
 
 const style = StyleSheet.create({
-    inline: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
     background: {
         width: 80,
         height: 80,
@@ -109,80 +97,10 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-evenly',
     },
-    noBackground: {
-        width: 220,
-        height: 80,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0)',
-    },
     invisible: {
         display: 'none',
     },
 });
-
-const floatingStyle = {
-    idle: {
-        background: {
-            width: 80,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: colors.blue,
-            borderColor: colors.darkWhite,
-            borderWidth: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        text: {
-            color: colors.darkWhite,
-            fontSize: 14,
-        },
-    },
-    movingButton: {
-        background: {
-            backgroundColor: colors.blue,
-            width: 89,
-            height: 70,
-            borderRadius: 15,
-            borderWidth: 1,
-            borderColor: 'black',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
-            opacity: 0.75,
-        },
-        text: {
-            color: colors.darkWhite,
-            fontSize: 16,
-        },
-    },
-    movingScreen: {
-        background: {
-            backgroundColor: colors.darkWhite,
-            width: 170,
-            height: 140,
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: 'black',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
-            opacity: 0.75,
-        },
-        text: {
-            color: colors.black,
-            fontSize: 16,
-        },
-    },
-    invisible: {
-        background: {
-            display: 'none',
-        },
-        text: {
-            display: 'none',
-        }
-    }
-};
 
 
 
