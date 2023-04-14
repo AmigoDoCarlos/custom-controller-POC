@@ -37,10 +37,10 @@ export default function Screens({backgroundStyle, exitButtonStyle, changeState}:
                     movingStyle={floatingStyle.movingScreen}
                     notMovingStyle={floatingStyle.invisible}
                     size= {{
-                        w: floatingStyle.movingScreen.background.width,
-                        h: floatingStyle.movingScreen.background.height,
+                        w: 170,
+                        h: 70,
                     }}
-                    hitboxRatio={0.45}
+                    hitboxRatio={[0.45, 0.05]}
                 >
                     {`${language.screen} 2x1`}
                 </FloatingButton>
@@ -52,10 +52,10 @@ export default function Screens({backgroundStyle, exitButtonStyle, changeState}:
                     movingStyle={floatingStyle.movingScreen}
                     notMovingStyle={floatingStyle.invisible}
                     size= {{
-                        w: floatingStyle.movingScreen.background.width,
-                        h: floatingStyle.movingScreen.background.height,
+                        w: 170,
+                        h: 130,
                     }}
-                    hitboxRatio={0.45}
+                    hitboxRatio={[0.45, 0.45]}
                 >
                     {`${language.screen} 2x2`}
                 </FloatingButton>
@@ -67,10 +67,10 @@ export default function Screens({backgroundStyle, exitButtonStyle, changeState}:
                     movingStyle={floatingStyle.movingScreen}
                     notMovingStyle={floatingStyle.invisible}
                     size= {{
-                        w: floatingStyle.movingScreen.background.width,
-                        h: floatingStyle.movingScreen.background.height,
+                        w: 340,
+                        h: 130,
                     }}
-                    hitboxRatio={0.45}
+                    hitboxRatio={[0.75, 0.45]}
                 >
                     {`${language.screen} 4x2`}
                 </FloatingButton>
@@ -107,8 +107,6 @@ const floatingStyle = {
     movingScreen: StyleSheet.create({
         background: {
             backgroundColor: colors.darkWhite,
-            width: 180,
-            height: 130,
             borderRadius: 15,
             borderWidth: 1,
             borderColor: colors.black,
@@ -124,7 +122,7 @@ const floatingStyle = {
     }),
     invisible: StyleSheet.create({
         background: {
-            display: 'none',
+            opacity: 0,
         },
         text: {
             display: 'none',

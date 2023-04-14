@@ -12,7 +12,7 @@ interface EditableButtonProps {
     textColor: string
     borderColor: string,
     backgroundColor: string,
-    hitboxRatio: number,
+    hitboxRatio: number[],
     width: number,
     height: number,
 }

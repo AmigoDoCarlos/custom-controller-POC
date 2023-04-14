@@ -3,7 +3,7 @@ import { View, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 import { colors } from '../../colors';
 import EditContext from '../../contexts/EditContext';
 import PageContent from './PageContent';
-import Hitbox from './Hitbox';
+// import Hitbox from './Hitbox';
 
 
 export default function EditController(){
@@ -12,7 +12,7 @@ export default function EditController(){
             <StatusBar hidden barStyle={'dark-content'} backgroundColor={colors.darkWhite}/>
             <EditContext>
                 <PageContent />
-                <Hitbox />
+                {/* <Hitbox /> */}
             </EditContext>
         </SafeAreaView>
     )

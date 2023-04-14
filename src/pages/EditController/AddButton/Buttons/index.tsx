@@ -37,10 +37,10 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                     movingStyle={floatingStyle.movingButton}
                     notMovingStyle={floatingStyle.invisible}
                     size= {{
-                        w: floatingStyle.movingButton.background.width,
-                        h: floatingStyle.movingButton.background.height,
+                        w: 89,
+                        h: 70,
                     }}
-                    hitboxRatio={0.05}
+                    hitboxRatio={[0.05, 0.05]}
                 >
                     {`${language.button} 1x1`}
                 </FloatingButton>
@@ -52,10 +52,10 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                     movingStyle={floatingStyle.movingButton}
                     notMovingStyle={floatingStyle.invisible}
                     size= {{
-                        w: floatingStyle.movingButton.background.width,
-                        h: floatingStyle.movingButton.background.height,
+                        w: 89,
+                        h: 140,
                     }}
-                    hitboxRatio={0.25}
+                    hitboxRatio={[0.05, 0.45]}
                 >
                     {`${language.button} 1x2`}
                 </FloatingButton>
@@ -67,10 +67,10 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                     movingStyle={floatingStyle.movingButton}
                     notMovingStyle={floatingStyle.invisible}
                     size= {{
-                        w: floatingStyle.movingButton.background.width,
-                        h: floatingStyle.movingButton.background.height,
+                        w: 180,
+                        h: 70,
                     }}
-                    hitboxRatio={0.25}
+                    hitboxRatio={[0.45, 0.05]}
                 >
                     {`${language.button} 2x1`}
                 </FloatingButton>
@@ -107,8 +107,6 @@ const floatingStyle = {
     movingButton: StyleSheet.create({
         background: {
             backgroundColor: colors.blue,
-            width: 89,
-            height: 70,
             borderRadius: 15,
             borderWidth: 1,
             borderColor: colors.black,

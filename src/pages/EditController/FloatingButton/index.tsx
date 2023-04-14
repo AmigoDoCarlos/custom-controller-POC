@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Text, Animated, PanResponder, View, StyleSheet } from "react-native";
+import { Text, Animated, PanResponder, View } from "react-native";
 import { ElementType, useEditContext } from "../../../contexts/EditContext";
 
 type Coords = {
@@ -24,7 +24,7 @@ interface FloatingButtonProps {
     movingStyle?: propsStyle,
     notMovingStyle?: propsStyle,
     size: Size,
-    hitboxRatio: number,
+    hitboxRatio: number[],
     children: string,
     onStop?: () => void,
 }
@@ -43,8 +43,8 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
                 ...previous,
                 type: type,
                 hitbox: {
-                    w: size.w * hitboxRatio,
-                    h: size.h * hitboxRatio,
+                    w: size.w * hitboxRatio[0],
+                    h: size.h * hitboxRatio[1],
                 }
             }))
             setMoving(true);
@@ -74,9 +74,9 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
     useEffect(() => {
         if(typeof moving === 'boolean'){
             if(moving){
-                setFloatingButton({...floatingButton, state: 'moving'});
+                setFloatingButton(previous => ({...previous, state: 'moving'}));
             } else {
-                setFloatingButton({...floatingButton, state: 'released'});
+                setFloatingButton(previous => ({...previous, state: 'released'}));
                 onStop && onStop();
             }
         }
@@ -91,6 +91,8 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
                 backgroundStyle = {
                     ...backgroundStyle,
                     ...movingStyle.background,
+                    width: size.w,
+                    height: size.h,
                 }
                 textStyle = {
                     ...textStyle,
@@ -134,46 +136,3 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
         </Animated.View>
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const definePosition = (e: any) => {
-//     e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
-//         initial.current = {
-//             x: pageX,
-//             y: pageY,
-//         }
-//     })
-// }

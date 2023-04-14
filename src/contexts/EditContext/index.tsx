@@ -1,4 +1,4 @@
-import React, { useEffect, ReactNode, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 
 export enum ElementType {
     button1x1,
@@ -31,6 +31,7 @@ type DraggableButton = {
     self: Element | undefined,                 //as próprias coordenadas X, Y e o ID do botão sendo movido.
     sectors: SectorType[],                     //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
     hitbox: Hitbox | undefined,
+    trashed: boolean,
 }
 
 export type PositionedElement = {
@@ -43,7 +44,7 @@ export type PositionedElement = {
     Y: number,
     text: string,
     textColor: string,
-    hitboxRatio: number,
+    hitboxRatio: number[],
     width: number,
     height: number,
 }
@@ -79,6 +80,7 @@ const initialDraggableButton: DraggableButton = {
     sectors: initialSectors,
     type: undefined,
     hitbox: undefined,
+    trashed: false,
 };
 
 const initialContext:LocalContext = {

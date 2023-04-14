@@ -15,32 +15,23 @@ export default function MainSection(){
             const selfID = floatingButton.self.id;
             const selection = floatingButton.sectors.filter(s => s.selected);
 
-            if(selection.length === 0){
-               removeElement(selfID); 
-            } else {   
-                if(floatingButton.type === ElementType.button1x1){              
-                    const sector = selection[0];
-                    if(selfID !== sector.element.id){                                //se o usuário NÃO devolveu o botão pro mesmo lugar, entra no if
-                        if(buttons.find(b => b.id === selfID)){                      //se o usuário mudou um botão já existente para outro setor  
-                            updateElement(selfID, sector.element);
-                        } else {                                                     //já se o usuário simplesmente adicionou um novo botão
-                            const {x, y, id} = sector.element;
-                            newElement(ElementType.button1x1, x, y, id);
-                        }
-                    }
-                }
-                else if(floatingButton.type === ElementType.screen2x2){
-                    const baseSector = selection[0];
-                    if(selection.length === 4){
-                        if(buttons.find(b => b.id === selfID)){                       
-                            updateElement(selfID, baseSector.element);
-                        } else {                                                     
-                            const {x, y, id} = baseSector.element;
-                            newElement(ElementType.screen2x2, x, y, id);
-                        }
-                    }
-                }
+            //PAREI AQUI todo resolver:
+            // finalizar a adição do trecho de código deste lado para os novos botões adicionados;
+            // passar o tamanho dos botões em um contexto. Atualmente o floatingButton recebe um tamanho e este componente aqui usa outro não necessariamente relacionado.
+            // ajustar a detecção de colisão para os novos botões e telas
+
+            if((floatingButton.type === ElementType.button1x1 && selection.length === 1)
+                || (floatingButton.type === ElementType.button1x2 && selection.length === 2)
+                || (floatingButton.type === ElementType.button2x1 && selection.length === 2)
+                || (floatingButton.type === ElementType.screen2x1 && selection.length === 2)
+                || (floatingButton.type === ElementType.screen2x2 && selection.length === 4)
+                || (floatingButton.type === ElementType.screen4x2 && selection.length === 8)
+            ){
+                manageElement(selfID, selection[0].element, floatingButton.type);
+            } else if(floatingButton.trashed){
+                removeElement(selfID);
             }
+             
 
             setFloatingButton(previous => ({
                 ...previous,
@@ -52,27 +43,90 @@ export default function MainSection(){
                     selected: false,
                 })),
                 hitbox: undefined,
+                trashed: false,
             }))
         }
     }, [floatingButton.state]);
 
+    useEffect(() => {
+        const selection = floatingButton.sectors.filter(s => s.selected);
+        console.log(selection.map(s => s.element.id));
+    }, [floatingButton.sectors]);
+
+
+
+    const manageElement = (targetID: number, sectorElement: Element, type: ElementType) => {
+        if(buttons.find(b => b.id === targetID)){                      //se o usuário mudou um botão já existente para outro setor  
+            updateElement(targetID, sectorElement);
+        } else {                                                        //já se o usuário simplesmente adicionou um novo botão
+            const {x, y, id} = sectorElement;
+            newElement(type, x, y, id);
+        }
+    }
 
     const newElement = (type: ElementType, x: number, y: number, id: number) => {
-        const props = (type === ElementType.button1x1)? {
+        
+        let props = {                   //o valor padrão é o button 1x1
             text: language.button,
             color: colors.darkWhite,
-            background: colors.acqua, 
+            background: colors.blue, 
             width: 89,
             height: 70,
-            hitboxRatio: 0.05,
-        } : {
-            text: language.screen,
-            color: colors.black,
-            background: colors.darkWhite, 
-            width: 178,
-            height: 140,
-            hitboxRatio: 0.45,
+            hitboxRatio: [0.05, 0.05],
         };
+
+        switch(type){
+            case ElementType.button1x2:
+                props = {
+                    text: language.button,
+                    color: colors.darkWhite,
+                    background: colors.blue,
+                    width: 89,
+                    height: 140,
+                    hitboxRatio: [0.05, 0.45],
+                }
+            break;
+            case ElementType.button2x1:
+                props = {
+                    text: language.button,
+                    color: colors.darkWhite,
+                    background: colors.blue,
+                    width: 180,
+                    height: 70,
+                    hitboxRatio: [0.45, 0.05],
+                }
+            break;
+            case ElementType.screen2x1:
+                props = {
+                    text: language.screen,
+                    color: colors.black,
+                    background: colors.darkWhite, 
+                    width: 180,
+                    height: 70,
+                    hitboxRatio: [0.45, 0.05],
+                }
+            break;
+            case ElementType.screen2x2:
+                props = {
+                    text: language.screen,
+                    color: colors.black,
+                    background: colors.darkWhite, 
+                    width: 180,
+                    height: 140,
+                    hitboxRatio: [0.45, 0.45],
+                }
+            break;
+            case ElementType.screen4x2:
+                props = {
+                    text: language.screen,
+                    color: colors.black,
+                    background: colors.darkWhite, 
+                    width: 360,
+                    height: 140,
+                    hitboxRatio: [0.65, 0.45],
+                }
+            break;
+        }
 
         const nb = {
             type: type,

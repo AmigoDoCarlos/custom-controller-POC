@@ -30,12 +30,9 @@ export default function Footer(){
             const hit = floatingButton.hitbox;
             const self = floatingButton.self;
             if(self.x + hit.w > XY.x){
-                return setFloatingButton(previous => ({
+                setFloatingButton(previous => ({
                     ...previous,
-                    sectors: previous.sectors.map(s => ({
-                        ...s,
-                        selected: false,
-                    }))
+                    trashed: true,
                 }));
             }
         }
