@@ -31,7 +31,7 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
             <View style={backgroundStyle}>
                 <FloatingButton
                     type={ElementType.button1x1} 
-                    myID={100}
+                    mySectors={[100]}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
                     movingStyle={floatingStyle.movingButton}
@@ -45,23 +45,8 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                     {`${language.button} 1x1`}
                 </FloatingButton>
                 <FloatingButton
-                    type={ElementType.button1x2} 
-                    myID={100}
-                    onStop={() => changeState(AddButtonStates.Retracted)}
-                    idleStyle={floatingStyle.idle}
-                    movingStyle={floatingStyle.movingButton}
-                    notMovingStyle={floatingStyle.invisible}
-                    size= {{
-                        w: 89,
-                        h: 140,
-                    }}
-                    hitboxRatio={[0.05, 0.45]}
-                >
-                    {`${language.button} 1x2`}
-                </FloatingButton>
-                <FloatingButton
                     type={ElementType.button2x1} 
-                    myID={100}
+                    mySectors={[100]}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
                     movingStyle={floatingStyle.movingButton}
@@ -73,6 +58,21 @@ export default function Buttons({backgroundStyle, exitButtonStyle, changeState}:
                     hitboxRatio={[0.45, 0.05]}
                 >
                     {`${language.button} 2x1`}
+                </FloatingButton>
+                <FloatingButton
+                    type={ElementType.button1x2} 
+                    mySectors={[100]}
+                    onStop={() => changeState(AddButtonStates.Retracted)}
+                    idleStyle={floatingStyle.idle}
+                    movingStyle={floatingStyle.movingButton}
+                    notMovingStyle={floatingStyle.invisible}
+                    size= {{
+                        w: 89,
+                        h: 140,
+                    }}
+                    hitboxRatio={[0.05, 0.45]}
+                >
+                    {`${language.button} 1x2`}
                 </FloatingButton>
             </View>
         </View>

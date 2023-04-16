@@ -15,9 +15,9 @@ export default function Footer(){
     const [XY, setXY] = useState<Position>({x: 0, y: 0});
 
     const backgroundStyle = useMemo(() => {
-        if(floatingButton.self && floatingButton.hitbox && floatingButton.state === 'moving'){
+        if(floatingButton.location && floatingButton.hitbox && floatingButton.state === 'moving'){
             const hit = floatingButton.hitbox;
-            const self = floatingButton.self;
+            const self = floatingButton.location;
             if(self.x + hit.w > XY.x){
                 return style.redBackground;
             }
@@ -26,9 +26,9 @@ export default function Footer(){
     }, [floatingButton]);
 
     useEffect(() => {
-        if(floatingButton.self && floatingButton.hitbox){
+        if(floatingButton.location && floatingButton.hitbox){
             const hit = floatingButton.hitbox;
-            const self = floatingButton.self;
+            const self = floatingButton.location;
             if(self.x + hit.w > XY.x){
                 setFloatingButton(previous => ({
                     ...previous,
@@ -36,7 +36,7 @@ export default function Footer(){
                 }));
             }
         }
-    }, [floatingButton.self])
+    }, [floatingButton.location])
 
     const definePosition = (e: any) => {
         e.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
@@ -46,7 +46,7 @@ export default function Footer(){
 
     const Icons = useCallback(() => {
         const hit = floatingButton.hitbox;
-        const self = floatingButton.self;
+        const self = floatingButton.location;
         
         if(floatingButton.state === 'moving') return (
             <Trash2
@@ -65,7 +65,7 @@ export default function Footer(){
                 </View>
             </>
         )
-    }, [floatingButton.self]);
+    }, [floatingButton]);
 
     
     return (

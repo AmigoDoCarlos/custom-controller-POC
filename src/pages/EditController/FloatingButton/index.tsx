@@ -19,7 +19,7 @@ type propsStyle = {
 
 interface FloatingButtonProps {
     type: ElementType
-    myID: number,
+    mySectors: number[],
     idleStyle: propsStyle,
     movingStyle?: propsStyle,
     notMovingStyle?: propsStyle,
@@ -29,7 +29,7 @@ interface FloatingButtonProps {
     onStop?: () => void,
 }
 
-export default function FloatingButton({type, myID, idleStyle, movingStyle, notMovingStyle, children, size, hitboxRatio, onStop}: FloatingButtonProps){
+export default function FloatingButton({type, mySectors, idleStyle, movingStyle, notMovingStyle, children, size, hitboxRatio, onStop}: FloatingButtonProps){
     const { floatingButton, setFloatingButton } = useEditContext();
     const [moving, setMoving] = useState<boolean | undefined>(undefined);
     const initial = useRef<Coords>({x: 0, y: 0});
@@ -43,6 +43,7 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
                 ...previous,
                 type: type,
                 hitbox: {
+                    sectors: mySectors,
                     w: size.w * hitboxRatio[0],
                     h: size.h * hitboxRatio[1],
                 }
@@ -62,8 +63,7 @@ export default function FloatingButton({type, myID, idleStyle, movingStyle, notM
         if(moving && (initial.current.x > 0) && (initial.current.y > 0)){
             setFloatingButton(previous => ({
                 ...previous,
-                self: {
-                    id: myID,
+                location: {
                     x: Math.floor(initial.current.x + value.x),
                     y: Math.floor(initial.current.y + value.y),
                 }

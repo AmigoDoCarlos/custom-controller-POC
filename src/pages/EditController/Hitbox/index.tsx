@@ -5,10 +5,9 @@ import { colors } from '../../../colors';
 
 export default function Hitbox(){                           //this is just for debugging; enable it on the main file to see where the hitbox of the floating button is being placed
     const { floatingButton } = useEditContext();
-    if(floatingButton.self && floatingButton.hitbox){
+    if(floatingButton.location && floatingButton.hitbox){
         const hit = floatingButton.hitbox;
-        const self = floatingButton.self;
-        //console.log('hitbox:', hit); //, 'self:', self);
+        const self = floatingButton.location;
         return (
             <View style={{
                 ...style.dummy,

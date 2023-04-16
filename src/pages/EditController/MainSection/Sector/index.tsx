@@ -21,15 +21,30 @@ export default function Sector({myID}: SectorProps){
     const XY = useRef<undefined | Position>(undefined);
     const selected = useRef<boolean>(false);
 
-    const hasAButton = useMemo(() => (
-        buttons.find(b => b.id === myID) &&
-        floatingButton.self &&
-        floatingButton.self.id !== myID
-    ), [buttons, floatingButton.self]); 
+    const hasAButton = useMemo(() => {
+        if(!floatingButton.hitbox || buttons.length === 0) return false;
+        
+        const butts = buttons.map(b => b.sectorsOccupied);
+        const flyingButts = floatingButton.hitbox.sectors;
+        let hasOrNot = false;
+
+        butts.forEach(butt => {
+            if(butt.includes(myID)){
+                hasOrNot = true;
+            }
+        })
+
+        if(hasOrNot && flyingButts.findIndex(fb => fb === myID) > -1){
+            hasOrNot = false;
+        }
+
+        return hasOrNot;
+    }, [buttons, floatingButton.hitbox]); 
     
+
     useEffect(() => {
-        if(XY.current && floatingButton.self && floatingButton.hitbox){
-            const self = floatingButton.self;
+        if(XY.current && floatingButton.hitbox && floatingButton.location){
+            const self = floatingButton.location;
             const hit = floatingButton.hitbox;
 
             if((XY.current.x < self.x + hit.w) &&
@@ -42,7 +57,7 @@ export default function Sector({myID}: SectorProps){
                 selected.current = false;
             }
         }
-    }, [floatingButton.self]);
+    }, [floatingButton.location]);
 
 
     useEffect(() => {
@@ -89,83 +104,3 @@ const style = StyleSheet.create({
         height: height,
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //console.log('eae', myID);
-// if(floatingButton.sectors){
-//     const index = floatingButton.sectors.findIndex(s => s.id === myID);
-//     if(!selected.current && index > -1){                                        
-//         const newSelection = floatingButton.sectors.slice();
-//         newSelection.splice(index, 1);                                          //remoção caso este setor não deva mais estar entre os selecionados pelo floatingButton
-//         setFloatingButton(previous => ({
-//             ...previous,
-//             sectors: newSelection,
-//         }));
-//     } else if(selected.current && index < 0) {                                  //e adição, caso este setor tenha sido selecionado mas ainda não computado
-//         const newSelection = [...floatingButton.sectors, {
-//             id: myID,
-//             x: XY.current.x,
-//             y: XY.current.y
-//         }];
-//         setFloatingButton(previous => ({
-//             ...previous,
-//             sectors: newSelection,
-//         }));
-//     }
-// } else if(selected.current) {
-//     setFloatingButton(previous => ({
-//         ...previous,
-//         sectors: [{
-//             id: myID,
-//             x: (XY.current)? XY.current.x : 0,
-//             y: (XY.current)? XY.current.y : 0,
-//         }]
-//     }));
-// }

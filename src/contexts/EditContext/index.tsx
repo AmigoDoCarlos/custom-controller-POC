@@ -15,7 +15,13 @@ export type Element = {
     y: number,
 }
 
+export type Coordinates = {
+    x: number,
+    y: number,
+}
+
 export type Hitbox = {
+    sectors: number[],
     w: number,
     h: number,
 }
@@ -26,16 +32,15 @@ export type SectorType = {
 }
 
 type DraggableButton = {
-    state: 'idle' | 'moving' | 'released'
+    state: 'idle' | 'moving' | 'released',
     type: ElementType | undefined,
-    self: Element | undefined,                 //as próprias coordenadas X, Y e o ID do botão sendo movido.
-    sectors: SectorType[],                     //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
+    location: Coordinates | undefined,                  //as próprias coordenadas X, Y e o ID do botão sendo movido.
+    sectors: SectorType[],                          //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
     hitbox: Hitbox | undefined,
     trashed: boolean,
 }
 
 export type PositionedElement = {
-    id: number,
     type: ElementType,
     backgroundColor: string,
     borderColor: string,
@@ -47,6 +52,7 @@ export type PositionedElement = {
     hitboxRatio: number[],
     width: number,
     height: number,
+    sectorsOccupied: number[],
 }
 
 type LocalContext = {
@@ -72,10 +78,9 @@ const initialSectors: SectorType[] = sectors.map(id => ({
 
 const initialDraggableButton: DraggableButton = {
     state: 'idle', 
-    self: {
+    location: {
         x: -1,
         y: -1,
-        id: -1
     }, 
     sectors: initialSectors,
     type: undefined,
@@ -104,10 +109,6 @@ export default function EditProvider(props: EditProviderProps){
     const [floatingButton, setFloatingButton] = useState<DraggableButton>(initialDraggableButton);
     const [buttons, setButtons] = useState<PositionedElement[]>([]);
     const { children } = props;
-
-    // useEffect(() => {
-    //     console.log(buttons.map(b => b.id));
-    // }, [buttons]);
 
     const context: LocalContext = {
         floatingButton,

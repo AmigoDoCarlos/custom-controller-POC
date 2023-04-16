@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TouchableHighlight, Text } from 'react-native';
-import { useGlobalContext } from '../../../contexts/GlobalContext';
+import React, { useMemo, useState, useEffect } from 'react';
+import { StyleSheet, TouchableHighlight } from 'react-native';
 import { useEditContext } from '../../../contexts/EditContext';
 import { colors } from '../../../colors';
 import { Plus, X } from 'react-native-feather';
@@ -21,8 +20,8 @@ export default function AddButton(){
     
     const buttonStyle = useMemo(() => {
         const invisible = (floatingButton.state === 'moving')
-        ? { backgroundColor: 'rgba(0,0,0,0)'}
-        : null;
+        ? [style.invisible, {backgroundColor: 'rgba(0,0,0,0)'}]
+        : [null, null];
 
         switch(state){
             case AddButtonStates.Expanded:
@@ -30,22 +29,33 @@ export default function AddButton(){
             case AddButtonStates.ExpandedScreens:
                 return {
                     ...style.expandBackground,
-                    ...invisible,
+                    ...invisible[1],
                     width: 300,   
                 }
             case AddButtonStates.ExpandedButtons:
                 return {
                     ...style.expandBackground,
-                    ...invisible,
+                    ...invisible[1],
                     width: 300,   
                 }
-            default: return style.background; 
+            default: return {
+                ...style.background,
+                ...invisible[0],
+            }; 
         }
     }, [state, floatingButton.state]);  
 
     const exitButtonStyle = useMemo(() => {
         if(floatingButton.state === 'moving') return style.invisible;
         return null;
+    }, [floatingButton.state]);
+
+    useEffect(() => {
+        if(floatingButton.state === 'moving' &&
+            state === AddButtonStates.Expanded
+        ){
+            setState(AddButtonStates.Retracted);
+        }
     }, [floatingButton.state]);
 
     switch(state){

@@ -4,7 +4,7 @@ import { ElementType } from "../../../contexts/EditContext";
 
 interface EditableButtonProps {
     type: ElementType,
-    myID: number,
+    mySectors: number[],
     X: number,
     Y: number,
     text: string,
@@ -18,11 +18,11 @@ interface EditableButtonProps {
 }
 
 
-export default function EditableButton({type, myID, X, Y, width, height, hitboxRatio, text, command, textColor, borderColor, backgroundColor}: EditableButtonProps){
+export default function EditableButton({type, mySectors, X, Y, width, height, hitboxRatio, text, command, textColor, borderColor, backgroundColor}: EditableButtonProps){
 
     const [savedProps, setSavedProps] = useState({
         type,
-        myID,
+        mySectors,
         X,
         Y,
         width, 
@@ -59,7 +59,7 @@ export default function EditableButton({type, myID, X, Y, width, height, hitboxR
     return (
         <FloatingButton
             type={type}
-            myID={myID}
+            mySectors={savedProps.mySectors}
             idleStyle={idleStyle}
             movingStyle={{
                 ...idleStyle,

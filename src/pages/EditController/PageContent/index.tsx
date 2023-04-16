@@ -15,8 +15,8 @@ export default function PageContent(){
         buttons.map(button => (
             <EditableButton
                 type={button.type}
-                key={button.id}
-                myID={button.id}
+                key={button.sectorsOccupied[0]}
+                mySectors={button.sectorsOccupied}
                 X={button.X}
                 Y={button.Y}
                 backgroundColor={button.backgroundColor}

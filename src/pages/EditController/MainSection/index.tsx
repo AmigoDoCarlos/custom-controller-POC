@@ -11,14 +11,12 @@ export default function MainSection(){
     
 
     useEffect(() => {
-        if(floatingButton.self && floatingButton.state === 'released'){
-            const selfID = floatingButton.self.id;
+        if(floatingButton.hitbox && floatingButton.state === 'released'){
+            const selfID = floatingButton.hitbox.sectors[0];
             const selection = floatingButton.sectors.filter(s => s.selected);
 
             //PAREI AQUI todo resolver:
-            // finalizar a adição do trecho de código deste lado para os novos botões adicionados;
             // passar o tamanho dos botões em um contexto. Atualmente o floatingButton recebe um tamanho e este componente aqui usa outro não necessariamente relacionado.
-            // ajustar a detecção de colisão para os novos botões e telas
 
             if((floatingButton.type === ElementType.button1x1 && selection.length === 1)
                 || (floatingButton.type === ElementType.button1x2 && selection.length === 2)
@@ -27,7 +25,8 @@ export default function MainSection(){
                 || (floatingButton.type === ElementType.screen2x2 && selection.length === 4)
                 || (floatingButton.type === ElementType.screen4x2 && selection.length === 8)
             ){
-                manageElement(selfID, selection[0].element, floatingButton.type);
+                const occupiedSectors = selection.map(s => s.element);
+                manageElement(selfID, occupiedSectors, floatingButton.type);
             } else if(floatingButton.trashed){
                 removeElement(selfID);
             }
@@ -37,7 +36,6 @@ export default function MainSection(){
                 ...previous,
                 state: 'idle',
                 type: undefined,
-                self: undefined,
                 sectors: previous.sectors.map(s => ({
                     ...s,
                     selected: false,
@@ -48,30 +46,25 @@ export default function MainSection(){
         }
     }, [floatingButton.state]);
 
-    useEffect(() => {
-        const selection = floatingButton.sectors.filter(s => s.selected);
-        console.log(selection.map(s => s.element.id));
-    }, [floatingButton.sectors]);
 
-
-
-    const manageElement = (targetID: number, sectorElement: Element, type: ElementType) => {
-        if(buttons.find(b => b.id === targetID)){                      //se o usuário mudou um botão já existente para outro setor  
-            updateElement(targetID, sectorElement);
+    const manageElement = (targetID: number, sectors: Element[], type: ElementType) => {
+        if(buttons.find(b => b.sectorsOccupied[0] === targetID)){        //se o usuário mudou um botão já existente para outro setor  
+            updateElement(targetID, sectors[0]);
         } else {                                                        //já se o usuário simplesmente adicionou um novo botão
-            const {x, y, id} = sectorElement;
-            newElement(type, x, y, id);
+            newElement(type, sectors);
         }
     }
 
-    const newElement = (type: ElementType, x: number, y: number, id: number) => {
+    const newElement = (type: ElementType, sectors: Element[]) => {
+        
+        const sectorsIDs = sectors.map(s => s.id);
         
         let props = {                   //o valor padrão é o button 1x1
             text: language.button,
             color: colors.darkWhite,
             background: colors.blue, 
             width: 89,
-            height: 70,
+            height: 72,
             hitboxRatio: [0.05, 0.05],
         };
 
@@ -82,7 +75,7 @@ export default function MainSection(){
                     color: colors.darkWhite,
                     background: colors.blue,
                     width: 89,
-                    height: 140,
+                    height: 150,
                     hitboxRatio: [0.05, 0.45],
                 }
             break;
@@ -91,8 +84,8 @@ export default function MainSection(){
                     text: language.button,
                     color: colors.darkWhite,
                     background: colors.blue,
-                    width: 180,
-                    height: 70,
+                    width: 185,
+                    height: 74,
                     hitboxRatio: [0.45, 0.05],
                 }
             break;
@@ -101,8 +94,8 @@ export default function MainSection(){
                     text: language.screen,
                     color: colors.black,
                     background: colors.darkWhite, 
-                    width: 180,
-                    height: 70,
+                    width: 185,
+                    height: 74,
                     hitboxRatio: [0.45, 0.05],
                 }
             break;
@@ -111,8 +104,8 @@ export default function MainSection(){
                     text: language.screen,
                     color: colors.black,
                     background: colors.darkWhite, 
-                    width: 180,
-                    height: 140,
+                    width: 185,
+                    height: 150,
                     hitboxRatio: [0.45, 0.45],
                 }
             break;
@@ -121,8 +114,8 @@ export default function MainSection(){
                     text: language.screen,
                     color: colors.black,
                     background: colors.darkWhite, 
-                    width: 360,
-                    height: 140,
+                    width: 380,
+                    height: 150,
                     hitboxRatio: [0.65, 0.45],
                 }
             break;
@@ -130,9 +123,8 @@ export default function MainSection(){
 
         const nb = {
             type: type,
-            X: x - (margin * 0.5),
-            Y: y - (margin * 0.5),
-            id: id,
+            X: sectors[0].x,
+            Y: sectors[0].y,
             backgroundColor: props.background,
             borderColor: colors.black,
             command: '',
@@ -141,6 +133,7 @@ export default function MainSection(){
             hitboxRatio: props.hitboxRatio,
             width: props.width,
             height: props.height,
+            sectorsOccupied: sectorsIDs,
         }
 
         setButtons(previous => [...previous, nb]);
@@ -149,12 +142,15 @@ export default function MainSection(){
 
     const updateElement = (fromID: number, destination: Element) => {
         return setButtons(buttons => buttons.map(button => {
-            if (button.id === fromID){
+            if (button.sectorsOccupied[0] === fromID){
+
+                const delta = destination.id - fromID;
+                
                 return {
                     ...button,
                     X: destination.x,
                     Y: destination.y,
-                    id: destination.id,
+                    sectorsOccupied: button.sectorsOccupied.map(s => (s + (delta))),
                 }    
             } return button;
         }))
@@ -162,9 +158,9 @@ export default function MainSection(){
 
     
     const removeElement = (id: number) => {
-        if(id){
-            const index = buttons.findIndex(b => b.id === id);
-            console.log('removendo elemento ', id, '->', buttons.map(b => b.id), index);
+        if(id >= 0){
+            const index = buttons.findIndex(b => b.sectorsOccupied[0] === id);
+            console.log('removendo elemento ', id, '->', buttons.map(b => b.sectorsOccupied[0]), index);
             if(index >= 0){
                 const newButtonList = buttons.slice();
                 newButtonList.splice(index, 1);

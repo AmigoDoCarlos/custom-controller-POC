@@ -31,7 +31,7 @@ export default function Screens({backgroundStyle, exitButtonStyle, changeState}:
             <View style={backgroundStyle}>
                 <FloatingButton
                     type={ElementType.screen2x1} 
-                    myID={100}
+                    mySectors={[200]}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
                     movingStyle={floatingStyle.movingScreen}
@@ -46,7 +46,7 @@ export default function Screens({backgroundStyle, exitButtonStyle, changeState}:
                 </FloatingButton>
                 <FloatingButton
                     type={ElementType.screen2x2} 
-                    myID={100}
+                    mySectors={[200]}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
                     movingStyle={floatingStyle.movingScreen}
@@ -61,7 +61,7 @@ export default function Screens({backgroundStyle, exitButtonStyle, changeState}:
                 </FloatingButton>
                 <FloatingButton
                     type={ElementType.screen4x2} 
-                    myID={100}
+                    mySectors={[200]}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
                     movingStyle={floatingStyle.movingScreen}
