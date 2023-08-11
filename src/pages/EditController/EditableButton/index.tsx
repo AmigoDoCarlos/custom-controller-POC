@@ -73,6 +73,7 @@ export default function EditableButton({type, mySectors, X, Y, width, height, hi
                 w: savedProps.width,
                 h: savedProps.height,
             }}
+            onClick={() => console.log('Botão clicado!')}
         >
             {savedProps.text}
         </FloatingButton>

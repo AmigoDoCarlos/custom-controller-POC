@@ -27,9 +27,12 @@ interface FloatingButtonProps {
     hitboxRatio: number[],
     children: string,
     onStop?: () => void,
+    onClick?: () => void,
 }
 
-export default function FloatingButton({type, mySectors, idleStyle, movingStyle, notMovingStyle, children, size, hitboxRatio, onStop}: FloatingButtonProps){
+const ONCLICK_THRESHOLD = 50;
+
+export default function FloatingButton({type, mySectors, idleStyle, movingStyle, notMovingStyle, children, size, hitboxRatio, onStop, onClick}: FloatingButtonProps){
     const { floatingButton, setFloatingButton } = useEditContext();
     const [moving, setMoving] = useState<boolean | undefined>(undefined);
     const initial = useRef<Coords>({x: 0, y: 0});
@@ -71,16 +74,35 @@ export default function FloatingButton({type, mySectors, idleStyle, movingStyle,
         }
     })
 
+    const delta = () => {
+        const final = floatingButton.location;
+        const initial = floatingButton.initial;
+        if(final && initial){
+            console.log(final, initial);
+            return (final.x + final.y - initial.x - initial.y);
+        } return ONCLICK_THRESHOLD;
+    }
+
     useEffect(() => {
         if(typeof moving === 'boolean'){
             if(moving){
-                setFloatingButton(previous => ({...previous, state: 'moving'}));
-            } else {
+                console.log(initial.current);
+                setFloatingButton(previous => ({
+                    ...previous,
+                    state: 'moving',
+                    initial: initial.current,
+                }));
+            } else { 
+                console.log(floatingButton.location);
+                // if(onClick && delta() < ONCLICK_THRESHOLD){
+                //     onClick();
+                // }
                 setFloatingButton(previous => ({...previous, state: 'released'}));
                 onStop && onStop();
             }
         }
     }, [moving]);
+
 
     let backgroundStyle = idleStyle.background;
     let textStyle = idleStyle.text;  

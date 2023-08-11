@@ -60,19 +60,19 @@ export default function Screens({backgroundStyle, exitButtonStyle, changeState}:
                     {`${language.screen} 2x2`}
                 </FloatingButton>
                 <FloatingButton
-                    type={ElementType.screen4x2} 
+                    type={ElementType.screen3x2} 
                     mySectors={[200]}
                     onStop={() => changeState(AddButtonStates.Retracted)}
                     idleStyle={floatingStyle.idle}
                     movingStyle={floatingStyle.movingScreen}
                     notMovingStyle={floatingStyle.invisible}
                     size= {{
-                        w: 340,
+                        w: 255,
                         h: 130,
                     }}
                     hitboxRatio={[0.75, 0.45]}
                 >
-                    {`${language.screen} 4x2`}
+                    {`${language.screen} 3x2`}
                 </FloatingButton>
             </View>
         </View>

@@ -6,7 +6,7 @@ export enum ElementType {
     button2x1,
     screen2x1,
     screen2x2,
-    screen4x2,
+    screen3x2,
 }
 
 export type Element = {
@@ -35,6 +35,7 @@ type DraggableButton = {
     state: 'idle' | 'moving' | 'released',
     type: ElementType | undefined,
     location: Coordinates | undefined,                  //as próprias coordenadas X, Y e o ID do botão sendo movido.
+    initial?: Coordinates,                              //as coordenadas iniciais do movimento (opcionais).
     sectors: SectorType[],                          //as coordenas X, Y e o ID do setor por onde o botão foi arrastado por último
     hitbox: Hitbox | undefined,
     trashed: boolean,

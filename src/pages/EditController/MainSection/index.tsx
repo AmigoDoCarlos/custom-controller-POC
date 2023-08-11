@@ -15,15 +15,12 @@ export default function MainSection(){
             const selfID = floatingButton.hitbox.sectors[0];
             const selection = floatingButton.sectors.filter(s => s.selected);
 
-            //PAREI AQUI todo resolver:
-            // passar o tamanho dos botões em um contexto. Atualmente o floatingButton recebe um tamanho e este componente aqui usa outro não necessariamente relacionado.
-
             if((floatingButton.type === ElementType.button1x1 && selection.length === 1)
                 || (floatingButton.type === ElementType.button1x2 && selection.length === 2)
                 || (floatingButton.type === ElementType.button2x1 && selection.length === 2)
                 || (floatingButton.type === ElementType.screen2x1 && selection.length === 2)
                 || (floatingButton.type === ElementType.screen2x2 && selection.length === 4)
-                || (floatingButton.type === ElementType.screen4x2 && selection.length === 8)
+                || (floatingButton.type === ElementType.screen3x2 && selection.length === 6)
             ){
                 const occupiedSectors = selection.map(s => s.element);
                 manageElement(selfID, occupiedSectors, floatingButton.type);
@@ -40,6 +37,7 @@ export default function MainSection(){
                     ...s,
                     selected: false,
                 })),
+                initial: undefined,
                 hitbox: undefined,
                 trashed: false,
             }))
@@ -109,12 +107,12 @@ export default function MainSection(){
                     hitboxRatio: [0.45, 0.45],
                 }
             break;
-            case ElementType.screen4x2:
+            case ElementType.screen3x2:
                 props = {
                     text: language.screen,
                     color: colors.black,
                     background: colors.darkWhite, 
-                    width: 380,
+                    width: 280,
                     height: 150,
                     hitboxRatio: [0.65, 0.45],
                 }
